@@ -55,6 +55,12 @@ Now subsample, cluster and get the signatures of the single-cell expM
 summary_single_cell <- getClusterSignatures(expression_matrix = counts, subsample = TRUE)
 ```
 
+```{r}
+seurat_objects <- summary_single_cell$SeuratObject
+summary_single_cell <- summary_single_cell$Summary
+```
+
+
 Now we define some reference signatures. For the sake of simplicity, 
 the reference signatures will be the last 4 signatures of the original data and
 will be removed from it.
@@ -66,8 +72,6 @@ clusterS <- do.call(cbind, lapply(seq(1,length(summary_single_cell)), function(i
 
 celltypeS <- clusterS[,seq((dim(clusterS)[2]-3),dim(clusterS)[2])]
 colnames(celltypeS) <- c('Ex', 'Glia', 'In', 'Progenitors')
-
-#clusterS <- clusterS[,seq(1,dim(clusterS)[2]-4)]
 ```
 
 Now we can compute the correlation between the two
@@ -97,12 +101,14 @@ rownames(counts4) <- paste0('Gene-', seq(1,dim(counts4)[1]))
 
 ```{r, results='hide', message=FALSE}
 summary_new <- getClusterSignatures(expression_matrix = counts4, subsample=TRUE)
+new_seu_objects <- summary_new$SeuratObject
+summary_new <- summary_new$Summary
 ```
 
 ```{r}
 newS <- summary_new$S
 
-colnames(newS) <- paste0('c', colnames(newS))
+colnames(newS) <- paste0('New', colnames(newS))
 
 new_cor <- reference_signatures_correlation(newS, celltypeS)
 ```

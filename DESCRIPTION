@@ -30,7 +30,6 @@ Imports:
 	gtools,
 	grid,
 	plotly,
-	reticulate,
 	methods,
 	grDevices,
 	fgsea,

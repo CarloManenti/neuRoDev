@@ -6,7 +6,6 @@
 \usage{
 getClusterSignatures(
   expression_matrix,
-  algorithm = "louvain",
   split = NULL,
   subsample = FALSE,
   PCs_to_use = NULL,
@@ -17,15 +16,11 @@ getClusterSignatures(
   pBOGs = FALSE,
   rEEA = FALSE,
   pBOGsig = FALSE,
-  verbose = FALSE,
-  condaenv = "r-reticulate"
+  verbose = FALSE
 )
 }
 \arguments{
 \item{expression_matrix}{A single-cell RNAseq matrix or a list of matrices}
-
-\item{algorithm}{The algorithm to use between 'louvain' and 'leiden' to
-cluster cells}
 
 \item{split}{A vector that defines how to split a expression_matrix into multiple ones}
 
@@ -56,9 +51,6 @@ has to compute also the pBOGsig}
 
 \item{verbose}{A boolean variable to define if the steps of Seurat will be
 printed or not}
-
-\item{condaenv}{The name of the conda environment in which 'leidenalg'
-module is present, in case the user wants to use the Leiden algorithm}
 }
 \value{
 The result of map_clusters_to_representation run on each expression_matrix after

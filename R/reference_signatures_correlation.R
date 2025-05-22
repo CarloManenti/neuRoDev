@@ -39,13 +39,14 @@ reference_signatures_correlation <- function(S,
   if(warn) {
     mean_sig <- mean(unlist(S) > 1)
     if(mean_sig < 0.05) {
-      warning('The signatures given have less then 5% (', round(mean_sig*100, digits = 1), '%)
+      message('The signatures given have less then 5% (', round(mean_sig*100, digits = 1), '%)
     of the genes with significant variability in the samples (fold-change > 2).
     The mapping results should be interpreted with caution, as the small
-    differences will likely be amplified')
+    differences will likely be amplified. This may also happen if there are multiple
+    clusters of similar subtypes.')
     }
     if(mean_sig > 0.20) {
-      warning('The signatures given have more then 20% (', round(mean_sig*100, digits = 1), '%)
+      message('The signatures given have more then 20% (', round(mean_sig*100, digits = 1), '%)
     of the genes with significant variability in the samples (fold-change > 2).
     Check if the signatures were computed on normalized data for better results')
     }

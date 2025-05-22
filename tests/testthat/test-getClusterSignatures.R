@@ -9,5 +9,5 @@ test_that("Returns a list", {
 
 test_that("Length of 9 of returned list", {
   expect_equal(length(getClusterSignatures(M, resolution=2)),
-               9)
+               2)
 })
