@@ -45,11 +45,14 @@ geneset_average_expression <- function(geneset_df,
                                                                   sub_anno_df <- geneset_df[which(geneset_df[,genesets] == ag & geneset_df[,celltypes] == ct),]
                                                                   all_genes <- unlist(strsplit(sub_anno_df[,genes], '-', fixed = TRUE))
 
-                                                                  sub_exp <- SingleCellExperiment::logcounts(pseudobulk)[all_genes,]
+                                                                  sub_exp <- pseudobulk[all_genes,]
 
                                                                   mean_exp <- Matrix::colMeans(sub_exp)
 
                                                                 }))
+
+  rownames(geneset_matrix) <- unique(interaction(geneset_df[,celltypes],
+                                                 geneset_df[,genesets]))
 
   return(geneset_matrix)
 
