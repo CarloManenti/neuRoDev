@@ -1,0 +1,161 @@
+---
+title: "SignaturePackage"
+author: "Erik Bot"
+date: "2024-01-24"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{SignaturePackage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SignaturePackage)
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+library(BiocStyle)
+```
+
+```{r, echo = FALSE}
+library(knitr)
+```
+
+Defining a sample single-cell RNA seq object
+
+```{r}
+set.seed(123)
+n_cells <- 1000
+n_genes <- 1000
+counts1 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
+colnames(counts1) <- paste0('Cell-One-', seq(1,dim(counts1)[2]))
+rownames(counts1) <- paste0('Gene-', seq(1,dim(counts1)[1]))
+
+counts2 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
+colnames(counts2) <- paste0('Cell-Two-', seq(1,dim(counts2)[2]))
+rownames(counts2) <- paste0('Gene-', seq(1,dim(counts2)[1]))
+
+counts3 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
+colnames(counts3) <- paste0('Cell-Three-', seq(1,dim(counts3)[2]))
+rownames(counts3) <- paste0('Gene-', seq(1,dim(counts3)[1]))
+
+counts <- list('One' = counts1, 'Two' = counts2, 'Three' = counts3)
+```
+
+Now subsample, cluster and get the signatures of the single-cell expM
+
+```{r, results='hide', message=FALSE}
+summary_single_cell <- getClusterSignatures(expression_matrix = counts, subsample = TRUE)
+```
+
+Now we define some reference signatures. For the sake of simplicity, 
+the reference signatures will be the last 4 signatures of the original data and
+will be removed from it.
+
+```{r}
+clusterS <- do.call(cbind, lapply(seq(1,length(summary_single_cell)), function(i) {S <- summary_single_cell[[i]]$S
+                      colnames(S) <- paste0(i, '-', seq(1, dim(S)[2]))
+                      return(S)}))
+
+celltypeS <- clusterS[,seq((dim(clusterS)[2]-3),dim(clusterS)[2])]
+colnames(celltypeS) <- c('Ex', 'Glia', 'In', 'Progenitors')
+
+#clusterS <- clusterS[,seq(1,dim(clusterS)[2]-4)]
+```
+
+Now we can compute the correlation between the two
+
+```{r, results='hide', message=FALSE}
+single_cell_cor <- reference_signatures_correlation(S = clusterS, refS = celltypeS)
+```
+
+Now plot the UMAP
+
+```{r, results='hide', message=FALSE}
+single_cell_umap <- umap_signature_plot(signatures_cor = single_cell_cor, color_attr = single_cell_cor$`Best.Assignment`, label_attr = single_cell_cor$`Best.Assignment`)
+```
+
+```{r}
+single_cell_umap$umap_plot
+```
+
+Now we assume that this is the reference expM and we add new clusters which
+are not curated
+
+```{r}
+counts4 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
+colnames(counts4) <- paste0('Cell-Four-', seq(1,dim(counts4)[2]))
+rownames(counts4) <- paste0('Gene-', seq(1,dim(counts4)[1]))
+```
+
+```{r, results='hide', message=FALSE}
+summary_new <- getClusterSignatures(expression_matrix = counts4, subsample=TRUE)
+```
+
+```{r}
+newS <- summary_new$S
+
+colnames(newS) <- paste0('c', colnames(newS))
+
+new_cor <- reference_signatures_correlation(newS, celltypeS)
+```
+
+Now we can plot the new clusters over the previously defined UMAP
+
+```{r, results='hide', message=FALSE}
+new_to_reference <- add_to_annotated_reference(annotated_reference = single_cell_cor, signatures_cor = new_cor, color_attr = single_cell_cor$`Best.Assignment`)
+```
+
+```{r, message = FALSE}
+new_to_reference$Original$umap_plot
+new_to_reference$New$umap_plot
+```
+
+Now we can analyze the characteristics of the nearest neighbors
+
+```{r, results='hide', message=FALSE}
+new_best_annotation <- nearest_neighbor_annotation(single_cell_cor, rownames(new_cor), new_to_reference$New, 'Best.Assignment')
+```
+
+```{r, message=FALSE}
+new_best_annotation$`Barplot-Annotation`
+new_best_annotation$`Heatmap-Annotation`
+```
+
+If we now add an information to the reference, like the age of the clusters, we can then
+extract another information
+
+```{r}
+single_cell_cor$Age <- seq(1, dim(single_cell_cor)[1])
+```
+
+```{r, results='hide', message=FALSE}
+new_nn_days <- get_nearest_neighbor_knowledge(single_cell_cor, rownames(new_cor), new_to_reference$New, 'Age')
+```
+
+```{r}
+new_nn_days$`Whole_Boxplot`
+
+new_nn_days$`Cluster_Boxplot`
+```
+
+Now we can diffuse the new cluster labels through the UMAP network (assuming we
+have more significant label for the clusters)
+
+```{r}
+new_label_prediction <- labelPrediction(umap_obj = new_to_reference, new_clusters = rownames(new_cor), show_edges = TRUE)
+
+new_label_prediction$Plot
+```
+
+```{r}
+sessionInfo()
+```
+
