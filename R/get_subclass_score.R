@@ -1,12 +1,14 @@
-#' Get subclass score for mapping
+#' Get annotation score for mapping
 #'
 #' @param mapped_obj The result of mapData
 #' @param reference_df The dataframe with the annotations per reference cluster
 #' @param sub_idxs The indexes from which to select the annotations scores in
 #' mapped_obj$NearestNeighborsAnnotation$Annotations. If NULL (default), they are
 #' all kept.
+#' @param annotation_attr Defaults to SubClass. The column name in reference_df in which
+#' to find the cell annotation groups.
 #'
-#' @return A score per subclass considering all the mapped data points
+#' @return A score per annotation considering all the mapped data points
 #' @export
 #'
 #' @examples
@@ -24,8 +26,8 @@
 #' new_signatures = new_clusterS,
 #' reference_signatures = refS,
 #' color_attr = 'Best.Assignment')
-#' get_subclass_score(mapped_obj, reference_df = annotated_M)
-get_subclass_score <- function(mapped_obj, reference_df, sub_idxs = NULL) {
+#' get_annotation_score(mapped_obj, reference_df = annotated_M)
+get_annotation_score <- function(mapped_obj, reference_df, sub_idxs = NULL, annotation_attr = 'SubClass') {
 
   annotations <- mapped_obj$NearestNeighborsAnnotation$Annotations
 
@@ -35,24 +37,24 @@ get_subclass_score <- function(mapped_obj, reference_df, sub_idxs = NULL) {
 
   annotations <- annotations[sub_idxs]
 
-  subclass_score <- rowsum(as.matrix(unlist(annotations)),
+  annotation_score <- rowsum(as.matrix(unlist(annotations)),
                            group = unlist(lapply(strsplit(names(unlist(annotations)), '.', fixed = T),
                                                  function(i) {paste0(i[seq(2, length(i))], collapse = '.')})))[names(table(unlist(lapply(strsplit(names(unlist(annotations)), '.', fixed = T),
                                                                                                  function(i) {paste0(i[seq(2, length(i))], collapse = '.')})))),1]/table(unlist(lapply(strsplit(names(unlist(annotations)), '.', fixed = T),
                                                                                                                                                function(i) {i[2]})))
 
-  for(subclass in unique(reference_df$SubClass)) {
+  for(annotation in unique(reference_df[,annotation_attr])) {
 
-    if(!subclass %in% names(subclass_score)) {
-      previous_names <- names(subclass_score)
-      subclass_score <- c(subclass_score, 0)
-      names(subclass_score) <- c(previous_names, subclass)
+    if(!annotation %in% names(annotation_score)) {
+      previous_names <- names(annotation_score)
+      annotation_score <- c(annotation_score, 0)
+      names(annotation_score) <- c(previous_names, annotation)
     }
 
   }
 
-  subclass_score <- subclass_score[unique(reference_df$SubClass)]
+  annotation_score <- annotation_score[unique(reference_df[,annotation_attr])]
 
-  return(subclass_score)
+  return(annotation_score)
 
 }
