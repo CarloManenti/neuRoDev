@@ -1,8 +1,8 @@
 #' Get nearest neighbor knowledge
 #'
-#' Given an annotated reference dataframe annotated_reference,
+#' Given an annotated reference dataframe reference_df,
 #' a set of new clusters to analyze in new_clusters, a umap object as run
-#' with add_to_annotated_reference, which contains the new clusters to
+#' with add_to_reference, which contains the new clusters to
 #' analyze, and a given annotation label, it returns information about the
 #' nearest neighbors for each cluster and as a whole for that given
 #' annotation label. If remove_low_confidence=TRUE, it doesn't consider in the
@@ -31,7 +31,7 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' res <- add_to_annotated_reference(annotated_M,
+#' res <- add_to_reference(annotated_M,
 #' new_M,
 #' annotated_M$`Best.Assignment`)
 #' umap_obj <- res$New
@@ -40,7 +40,7 @@
 #' new_clusters,
 #' umap_obj,
 #' color_attr = 'Best.Assignment')
-get_nearest_neighbor_knowledge <- function(annotated_reference,
+get_nearest_neighbor_knowledge <- function(reference_df,
                                            new_clusters,
                                            umap_obj,
                                            color_attr,
@@ -51,7 +51,7 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
                                            to_exclude=NULL,
                                            compute_means=FALSE) {
 
-  # Description: given an annotated reference dataframe annotated_reference,
+  # Description: given an annotated reference dataframe reference_df,
   # a set of new clusters to analyze in new_clusters, a umap object as run
   # with add_to_annotated_reference, which contains the new clusters to
   # analyze, and a given annotation label, it returns information about the
@@ -74,14 +74,14 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
   }
 
   if(!is.null(to_exclude)) {
-    idxs_to_remove <- which(annotated_reference[,color_attr] %in% to_exclude)
+    idxs_to_remove <- which(reference_df[,color_attr] %in% to_exclude)
   } else {
     idxs_to_remove <- NULL
   }
 
   n_nearest <- min(n_nearest, ((dim(distance_matrix)[2])-1))
 
-  if(n_nearest > 0.9*dim(annotated_reference)[1] & compute_means == FALSE) {
+  if(n_nearest > 0.9*dim(reference_df)[1] & compute_means == FALSE) {
     message('The number of nearest neighbours
             (computed as min(n_nearest, ((dim(distance_matrix)[2])-1)))
             is higher than 90% of the total clusters. It should be better to
@@ -94,7 +94,7 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
   all_distribution <- c()
   all_weights <- c()
 
-  if(is.character(annotated_reference[,color_attr])) {
+  if(is.character(reference_df[,color_attr])) {
     summary_info <- list()
     summary_info_percentage <- list()
     all_info <- c()
@@ -113,7 +113,7 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
 
   n_nearest <- min(min(min_n_nearest), n_nearest)
 
-  clusters_to_exclude <- c(new_clusters, rownames(annotated_reference)[idxs_to_remove])
+  clusters_to_exclude <- c(new_clusters, rownames(reference_df)[idxs_to_remove])
 
   for(c in new_clusters) {
 
@@ -125,11 +125,11 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
     all_n <- all_n[seq(1,n_nearest)]
     dist <- dist[seq(1,n_nearest)]
 
-    annotated_reference_f <- annotated_reference[all_n[which(all_n %in% rownames(annotated_reference))],]
+    annotated_reference_f <- reference_df[all_n[which(all_n %in% rownames(reference_df))],]
 
     names(dist) <- annotated_reference_f[,color_attr]
 
-    if(is.character(annotated_reference[,color_attr])) {
+    if(is.character(reference_df[,color_attr])) {
       annotations <- value_table(dist,
                                  perc = FALSE,
                                  reciprocal = TRUE,
@@ -148,7 +148,7 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
     all_distribution <- c(all_distribution, annotated_reference_f[,color_attr])
   }
 
-  if(is.numeric(annotated_reference[,color_attr])) {
+  if(is.numeric(reference_df[,color_attr])) {
     summary_info <- lapply(seq(1,length(annotation_vector)), function(i) {
       weighted_summary(annotation_vector[[i]], weights_list[[i]])
     })
@@ -199,7 +199,7 @@ get_nearest_neighbor_knowledge <- function(annotated_reference,
     return(out)
   }
 
-  if(is.character(annotated_reference[,color_attr])) {
+  if(is.character(reference_df[,color_attr])) {
 
     m <- get_matrix_from_list(summary_info_percentage)
 

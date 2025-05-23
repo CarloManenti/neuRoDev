@@ -5,7 +5,7 @@
 \title{Nearest neighbor annotation}
 \usage{
 nearest_neighbor_annotation(
-  annotated_reference,
+  reference_df,
   new_clusters,
   umap_obj,
   color_attr,
@@ -19,7 +19,7 @@ nearest_neighbor_annotation(
 )
 }
 \arguments{
-\item{annotated_reference}{The reference correlation matrix.}
+\item{reference_df}{The reference correlation matrix.}
 
 \item{new_clusters}{The new clusters names.}
 
@@ -41,7 +41,7 @@ to \code{((dim(distance_matrix)[2])-1)}, where distance_matrix is given by:
 
 \item{title}{The title to add to the plots}
 
-\item{to_exclude}{The labels inside \code{annotated_reference[,color_attr]}
+\item{to_exclude}{The labels inside \code{reference_df[,color_attr]}
 that the user doesn't want to consider.}
 
 \item{compute_means}{A boolean variable. If TRUE, it computes the mean instead
@@ -55,9 +55,9 @@ barplot and the final number of nearest neighbors considered. If a sub
 annotation is provided, the same will be given for the sub annotation as well
 }
 \description{
-Given an annotated reference dataframe annotated_reference,
+Given an annotated reference dataframe reference_df,
 a set of new clusters to analyze in new_clusters, a umap object as run
-with add_to_annotated_reference, which contains the new clusters to
+with add_to_reference, which contains the new clusters to
 analyze, and a given annotation label (and possibly a
 sub_color_attr), it returns the annotation (and sub_annotation) of
 each cluster based on its nearest neighbors. With n_nearest you can set
@@ -77,7 +77,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-res <- add_to_annotated_reference(annotated_M,
+res <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 umap_obj <- res$New

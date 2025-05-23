@@ -13,7 +13,7 @@ getDrivingGenes(
 )
 }
 \arguments{
-\item{new_umap_obj}{The umap object coming from add_to_annotated_reference,
+\item{new_umap_obj}{The umap object coming from add_to_reference,
 under \code{New$umap_obj}}
 
 \item{newSignatures}{The signatures of the new points}
@@ -43,7 +43,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-mapped <- add_to_annotated_reference(annotated_M,
+mapped <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 getDrivingGenes(mapped$New$umap_obj, new_clusterS)

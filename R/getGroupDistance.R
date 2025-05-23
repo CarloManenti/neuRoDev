@@ -4,7 +4,7 @@
 #' given a membership label, an annotated reference (like those returned after
 #' correlating signatures) and a umap object
 #'
-#' @param annotated_reference The annotated reference, like those returned by
+#' @param reference_df The annotated reference, like those returned by
 #' reference_signatures_correlation
 #' @param membership_label A membership label that identifies a column in the
 #' annotated reference
@@ -27,9 +27,9 @@
 #' color_attr = group,
 #' label_attr = group)
 #' getGroupDistance(M, 'Best.Assignment', umap_obj)
-getGroupDistance <- function(annotated_reference, membership_label, umap_obj) {
+getGroupDistance <- function(reference_df, membership_label, umap_obj) {
 
-  membership <- annotated_reference[[membership_label]]
+  membership <- reference_df[[membership_label]]
 
   if('umap_obj' %in% names(umap_obj)) {
     network <- umap_obj$umap_obj$refined_network
@@ -48,7 +48,7 @@ getGroupDistance <- function(annotated_reference, membership_label, umap_obj) {
   min_distances_matrix <- mean_distances_matrix
 
   for(i in unique(membership)) {
-    cl1 <- annotated_reference$Cluster[which(membership == i)]
+    cl1 <- reference_df$Cluster[which(membership == i)]
 
     for(x in unique(membership)) {
 
@@ -56,7 +56,7 @@ getGroupDistance <- function(annotated_reference, membership_label, umap_obj) {
         next()
       }
 
-      cl2 <- annotated_reference$Cluster[which(membership == x)]
+      cl2 <- reference_df$Cluster[which(membership == x)]
 
       distance <- whole_distance_matrix[cl1, cl2]
 

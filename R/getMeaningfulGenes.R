@@ -2,7 +2,7 @@
 #'
 #' @param refSignatures The signatures of the clusters in the UMAP (not new ones)
 #' @param newSignatures The signatures of the new clusters
-#' @param umap_obj A UMAP object as given by the add_to_annotated_reference
+#' @param umap_obj A UMAP object as given by the add_to_reference
 #' function (but specifying 'New').
 #' It has to be an object that contains the following chain:
 #' `umap_obj$umap_obj$umap_out$layout` or `umap_obj$umap_out$layout`
@@ -30,7 +30,7 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' to_reference <- add_to_annotated_reference(annotated_M,
+#' to_reference <- add_to_reference(annotated_M,
 #' new_M,
 #' annotated_M$`Best.Assignment`)
 #' getMeaningfulGenes(umap_obj = to_reference$New,

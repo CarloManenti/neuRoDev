@@ -1,6 +1,6 @@
 #' Add new clusters to an annotated reference
 #'
-#'  Given an annotated reference dataframe (annotated_reference),
+#'  Given an annotated reference dataframe (reference_df),
 #'  a correlation dataframe (signatures_cor), as defined with
 #'  reference_signature_correlation, an annotation label (and possibly
 #'  label_attr), it maps the new clusters on the annotated reference
@@ -33,17 +33,17 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' add_to_annotated_reference(annotated_M,
+#' add_to_reference(annotated_M,
 #' new_M,
 #' annotated_M$`Best.Assignment`)
-add_to_annotated_reference <- function(annotated_reference,
-                                       signatures_cor,
-                                       color_attr,
-                                       label_attr=NULL,
-                                       new_name=NULL,
-                                       no_label=FALSE,
-                                       only_new_points=FALSE,
-                                       ...) {
+add_to_reference <- function(reference_df,
+                             signatures_cor,
+                             color_attr,
+                             label_attr=NULL,
+                             new_name=NULL,
+                             no_label=FALSE,
+                             only_new_points=FALSE,
+                             ...) {
 
   if(only_new_points && no_label) {
     message('Only the new points will be labeled in the plot,
@@ -51,12 +51,12 @@ add_to_annotated_reference <- function(annotated_reference,
                 set only_new_points as FALSE.')
   }
 
-  if(is.character(color_attr) && length(color_attr) == 1 && color_attr %in% colnames(annotated_reference)) {
-    color_attr <- annotated_reference[,color_attr]
+  if(is.character(color_attr) && length(color_attr) == 1 && color_attr %in% colnames(reference_df)) {
+    color_attr <- reference_df[,color_attr]
   }
 
-  if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(annotated_reference)) {
-    label_attr <- annotated_reference[,label_attr]
+  if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(reference_df)) {
+    label_attr <- reference_df[,label_attr]
   }
 
   if(is.null(new_name)) {new_name <- rownames(signatures_cor)}
@@ -86,7 +86,7 @@ add_to_annotated_reference <- function(annotated_reference,
     label_attr <- color_attr
   }
 
-  action_umap <- umap_plot_same_layout(annotated_reference = annotated_reference,
+  action_umap <- umap_plot_same_layout(reference_df = reference_df,
                                        signatures_cor = signatures_cor,
                                        color_attr = color_attr,
                                        label_attr = label_attr,

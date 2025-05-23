@@ -10,13 +10,13 @@ colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
 
 test_that("Length output", {
-  expect_equal(length(umap_plot_same_layout(annotated_reference = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)), 4)
+  expect_equal(length(umap_plot_same_layout(reference_df = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)), 4)
 })
 
 test_that("Names output", {
-  expect_identical(names(umap_plot_same_layout(annotated_reference = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)), c('Original', 'New', 'MappingQuality', 'NearestNeighborsAnnotation'))
+  expect_identical(names(umap_plot_same_layout(reference_df = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)), c('Original', 'New', 'MappingQuality', 'NearestNeighborsAnnotation'))
 })
 
 test_that("Type output", {
-  expect_s3_class(umap_plot_same_layout(annotated_reference = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)$Original$umap_plot, 'ggplot')
+  expect_s3_class(umap_plot_same_layout(reference_df = annotated_M, signatures_cor = new_M, color_attr = annotated_M$`Best.Assignment`)$Original$umap_plot, 'ggplot')
 })

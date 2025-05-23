@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SignaturePackage)
+library(neuRoDev)
 
-test_check("SignaturePackage")
+test_check("neuRoDev")

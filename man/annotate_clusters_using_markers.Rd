@@ -8,7 +8,7 @@ annotate_clusters_using_markers(umap_obj, marker_list, signatures)
 }
 \arguments{
 \item{umap_obj}{A UMAP object as given by the umap_signature_plot function or
-by the add_to_annotated_reference function
+by the add_to_reference function
 (but specifying if 'New' or 'Original').
 It has to be an object that contains the following chain:
 \code{umap_obj$umap_out$layout}}

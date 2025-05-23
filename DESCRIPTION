@@ -1,4 +1,4 @@
-Package: SignaturePackage
+Package: neuRoDev
 Title: Integrates starting datasets to create and analyze a UMAP, on which new data can be mapped
 Version: 0.0.1
 Depends: R (>= 4.1.0)

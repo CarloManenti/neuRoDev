@@ -80,7 +80,12 @@ run_seurat_clustering <- function(expression_matrix,
     return(s)
   }
 
-  s <- Seurat::RunUMAP(s, dims = 1:10, verbose = verbose, n.neighbors = nn)
+  s <- Seurat::RunUMAP(s,
+                       dims = 1:10,
+                       verbose = verbose,
+                       n.neighbors = nn,
+                       umap.method = "uwot",
+                       metric = "cosine")
 
   return(s)
 }

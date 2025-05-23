@@ -10,11 +10,11 @@ colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
 
 test_that("Returns a list", {
-  expect_s4_class(add_to_annotated_reference(annotated_M, new_M, annotated_M$`Best.Assignment`)
+  expect_s4_class(add_to_reference(annotated_M, new_M, annotated_M$`Best.Assignment`)
 , 'SimpleList')
 })
 
 test_that("List of length 4", {
-  expect_equal(length(add_to_annotated_reference(annotated_M, new_M, annotated_M$`Best.Assignment`))
+  expect_equal(length(add_to_reference(annotated_M, new_M, annotated_M$`Best.Assignment`))
                   , 4)
 })

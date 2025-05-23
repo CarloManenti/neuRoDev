@@ -4,10 +4,10 @@
 \alias{getGroupDistance}
 \title{getGroupDistance}
 \usage{
-getGroupDistance(annotated_reference, membership_label, umap_obj)
+getGroupDistance(reference_df, membership_label, umap_obj)
 }
 \arguments{
-\item{annotated_reference}{The annotated reference, like those returned by
+\item{reference_df}{The annotated reference, like those returned by
 reference_signatures_correlation}
 
 \item{membership_label}{A membership label that identifies a column in the

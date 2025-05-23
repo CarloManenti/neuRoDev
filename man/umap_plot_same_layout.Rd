@@ -6,7 +6,7 @@
 adding them}
 \usage{
 umap_plot_same_layout(
-  annotated_reference,
+  reference_df,
   signatures_cor,
   color_attr,
   mapping_quality = TRUE,
@@ -36,7 +36,7 @@ umap_plot_same_layout(
 )
 }
 \arguments{
-\item{annotated_reference}{The reference correlation matrix.}
+\item{reference_df}{The reference correlation matrix.}
 
 \item{signatures_cor}{The signature correlation matrix as defined in
 reference_signatures_correlation (but only the correlation values)}
@@ -124,7 +124,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-umap_plot_same_layout(annotated_reference = annotated_M,
+umap_plot_same_layout(reference_df = annotated_M,
 signatures_cor = new_M,
 color_attr = annotated_M$`Best.Assignment`)
 }

@@ -1,10 +1,10 @@
 ---
-title: "SignaturePackage"
+title: "neuRoDev"
 author: "Erik Bot"
 date: "2024-01-24"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{SignaturePackage}
+  %\VignetteIndexEntry{neuRoDev}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(SignaturePackage)
+library(neuRoDev)
 ```
 
 ```{r style, echo = FALSE, results = 'asis'}
@@ -116,7 +116,7 @@ new_cor <- reference_signatures_correlation(newS, celltypeS)
 Now we can plot the new clusters over the previously defined UMAP
 
 ```{r, results='hide', message=FALSE}
-new_to_reference <- add_to_annotated_reference(annotated_reference = single_cell_cor, signatures_cor = new_cor, color_attr = single_cell_cor$`Best.Assignment`)
+new_to_reference <- add_to_reference(reference_df = single_cell_cor, signatures_cor = new_cor, color_attr = single_cell_cor$`Best.Assignment`)
 ```
 
 ```{r, message = FALSE}

@@ -2,7 +2,7 @@
 #' adding them
 #'
 #' @inheritParams umap_signature_plot
-#' @param annotated_reference The reference correlation matrix.
+#' @param reference_df The reference correlation matrix.
 #' @param new_clusters The new clusters names.
 #' @param new_name The name/label that has to be given to new clusters.
 #' @param new_points_col The color of the new clusters in the UMAP plot
@@ -34,10 +34,10 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' umap_plot_same_layout(annotated_reference = annotated_M,
+#' umap_plot_same_layout(reference_df = annotated_M,
 #' signatures_cor = new_M,
 #' color_attr = annotated_M$`Best.Assignment`)
-umap_plot_same_layout <- function(annotated_reference,
+umap_plot_same_layout <- function(reference_df,
                                   signatures_cor,
                                   color_attr,
                                   mapping_quality=TRUE,
@@ -76,28 +76,28 @@ umap_plot_same_layout <- function(annotated_reference,
     sub_signatures_cor <- signatures_cor
   }
 
-  if(any(endsWith(tolower(colnames(annotated_reference)), 'value'))) {
-    sub_annotated_reference <- annotated_reference[,seq((max(which(endsWith(tolower(colnames(annotated_reference)), 'value'))))+1,
-                    dim(annotated_reference)[2])]
+  if(any(endsWith(tolower(colnames(reference_df)), 'value'))) {
+    sub_reference_df <- reference_df[,seq((max(which(endsWith(tolower(colnames(reference_df)), 'value'))))+1,
+                    dim(reference_df)[2])]
   } else {
-    sub_annotated_reference <- annotated_reference
+    sub_reference_df <- reference_df
   }
 
-  to_remove_idxs <- which(apply(sub_annotated_reference,
+  to_remove_idxs <- which(apply(sub_reference_df,
                                 2,
                                 function(i)
                                 {any(is.na(suppressWarnings(as.numeric(i))))
                                 }))
 
   if(length(to_remove_idxs) > 0) {
-    sub_annotated_reference <- sub_annotated_reference[,-which(apply(sub_annotated_reference,
+    sub_reference_df <- sub_reference_df[,-which(apply(sub_reference_df,
                                                                      2,
                                                                      function(i)
                                                                      {any(is.na(suppressWarnings(as.numeric(i))))
                                                                      }))]
   }
 
-  sub_annotated_reference <- sub_annotated_reference[,colnames(sub_signatures_cor)]
+  sub_reference_df <- sub_reference_df[,colnames(sub_signatures_cor)]
 
   if(is.null(label_attr) & !no_label) {
     label_attr <- color_attr
@@ -107,12 +107,12 @@ umap_plot_same_layout <- function(annotated_reference,
     label_attr <- NULL
   }
 
-  if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(annotated_reference)) {
-    label_attr <- annotated_reference[,label_attr]
+  if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(reference_df)) {
+    label_attr <- reference_df[,label_attr]
   }
 
-  if(is.character(color_attr) && length(color_attr) == 1 && color_attr %in% colnames(annotated_reference)) {
-    color_attr <- annotated_reference[,color_attr]
+  if(is.character(color_attr) && length(color_attr) == 1 && color_attr %in% colnames(reference_df)) {
+    color_attr <- reference_df[,color_attr]
   }
 
   if(is.null(new_clusters)) {
@@ -130,7 +130,7 @@ umap_plot_same_layout <- function(annotated_reference,
     names(new_points_col) <- new_clusters
   }
 
-  if(length(color_attr) == dim(annotated_reference)[1]) {
+  if(length(color_attr) == dim(reference_df)[1]) {
     old_color_attr <- color_attr
     if(length(new_name) == 1) {
       color_attr <- c(color_attr, rep(new_name, dim(signatures_cor)[1]))
@@ -142,7 +142,7 @@ umap_plot_same_layout <- function(annotated_reference,
   }
 
   if(!is.null(label_attr)) {
-    if(length(label_attr) == dim(annotated_reference)[1]) {
+    if(length(label_attr) == dim(reference_df)[1]) {
       old_label_attr <- label_attr
       if(length(new_name) == 1) {
         label_attr <- c(label_attr, rep(new_name, dim(signatures_cor)[1]))
@@ -162,12 +162,12 @@ umap_plot_same_layout <- function(annotated_reference,
 
   rownames(signatures_cor) <- new_clusters
 
-  if(is.null(annotated_reference) && is.null(umap_obj)) {
+  if(is.null(reference_df) && is.null(umap_obj)) {
     stop('Either a layout or a starting matrix need to be provided')
   }
 
   if(is.null(umap_obj)) {
-    umap_obj <- umap_graph_clustering(sub_annotated_reference,
+    umap_obj <- umap_graph_clustering(sub_reference_df,
                                      method = method,
                                      refine_network = refine_network,
                                      n_neighbors = n_neighbors,
@@ -193,7 +193,7 @@ umap_plot_same_layout <- function(annotated_reference,
 
   if(refine_network) {
     if(is.null(network)) {
-      network <- compute_snn_network(sub_annotated_reference,
+      network <- compute_snn_network(sub_reference_df,
                                      n_neighbors=n_neighbors)$network
       edges <- build_edges_df(network,
                               layout = layout,
@@ -238,7 +238,7 @@ umap_plot_same_layout <- function(annotated_reference,
     col_vector <- col_vector[which(!is.na(names(col_vector)))]
   }
 
-  combined_matrix <- rbind(S4Vectors::DataFrame(sub_annotated_reference),
+  combined_matrix <- rbind(S4Vectors::DataFrame(sub_reference_df),
                            S4Vectors::DataFrame(sub_signatures_cor))
 
   if(is.null(n_neighbors)) {n_neighbors <- min(15 + dim(sub_signatures_cor)[1],
@@ -530,7 +530,7 @@ umap_plot_same_layout <- function(annotated_reference,
   }
 
   if(annotate) {
-    new_best_annotation <- nearest_neighbor_annotation(annotated_reference = annotated_reference,
+    new_best_annotation <- nearest_neighbor_annotation(reference_df = reference_df,
                                                        new_clusters = new_clusters,
                                                        umap_obj = out$New,
                                                        color_attr = color_attr[which(!color_attr %in% new_clusters)],

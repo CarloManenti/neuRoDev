@@ -58,7 +58,7 @@ If update_reference=TRUE, also the updated reference
 }
 \description{
 Given a UMAP object umap_obj, obtained from the function
-add_to_annotated_reference (the New object), and names for new_clusters,
+add_to_reference (the New object), and names for new_clusters,
 it computes the diffusion of the new_clusters labels in the UMAP network
 defined in umap_obj. If a col_vector is given, the plot will be coloured
 as such. If new_points_col is given, the points corresponding to
@@ -77,7 +77,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-res <- add_to_annotated_reference(annotated_M,
+res <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 umap_obj <- res

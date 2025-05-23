@@ -1,8 +1,8 @@
 #' Nearest neighbor annotation
 #'
-#'  Given an annotated reference dataframe annotated_reference,
+#'  Given an annotated reference dataframe reference_df,
 #'  a set of new clusters to analyze in new_clusters, a umap object as run
-#'  with add_to_annotated_reference, which contains the new clusters to
+#'  with add_to_reference, which contains the new clusters to
 #'  analyze, and a given annotation label (and possibly a
 #'  sub_color_attr), it returns the annotation (and sub_annotation) of
 #'  each cluster based on its nearest neighbors. With n_nearest you can set
@@ -10,7 +10,7 @@
 #'  closest ones). You can provide a col_vector and sub_col_vector palettes
 #'  for the final barplots (otherwise it will create a palette).
 #' @inheritParams umap_plot_same_layout
-#' @inheritParams add_to_annotated_reference
+#' @inheritParams add_to_reference
 #' @param col_vector A named color palette vector for the annotations
 #' @param sub_col_vector A named color palette vector for the sub-annotations
 #' @param n_nearest The number of nearest neighbors to consider. It defaults
@@ -18,7 +18,7 @@
 #' `umap_obj$umap_out$knn$distances` or
 #' `umap_obj$umap_out$refined_network$distances`
 #' @param title The title to add to the plots
-#' @param to_exclude The labels inside `annotated_reference[,color_attr]`
+#' @param to_exclude The labels inside `reference_df[,color_attr]`
 #' that the user doesn't want to consider.
 #' @param compute_means A boolean variable. If TRUE, it computes the mean instead
 #' of the sum of values belonging to a given group.
@@ -44,7 +44,7 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' res <- add_to_annotated_reference(annotated_M,
+#' res <- add_to_reference(annotated_M,
 #' new_M,
 #' annotated_M$`Best.Assignment`)
 #' umap_obj <- res$New
@@ -53,7 +53,7 @@
 #' new_clusters,
 #' umap_obj,
 #' color_attr = 'Best.Assignment')
-nearest_neighbor_annotation <- function(annotated_reference,
+nearest_neighbor_annotation <- function(reference_df,
                                         new_clusters,
                                         umap_obj,
                                         color_attr,
@@ -65,9 +65,9 @@ nearest_neighbor_annotation <- function(annotated_reference,
                                         to_exclude=NULL,
                                         compute_means=FALSE) {
 
-  # Description: given an annotated reference dataframe annotated_reference,
+  # Description: given an annotated reference dataframe reference_df,
   # a set of new clusters to analyze in new_clusters, a umap object as run
-  # with add_to_annotated_reference, which contains the new clusters to
+  # with add_to_reference, which contains the new clusters to
   # analyze, and a given annotation label (and possibly a
   # sub_color_attr), it returns the annotation (and sub_annotation) of
   # each cluster based on its nearest neighbors. With n_nearest you can set
@@ -76,24 +76,24 @@ nearest_neighbor_annotation <- function(annotated_reference,
   # for the final barplots (otherwise it will create a palette).
 
   if(is.character(color_attr) & length(color_attr) == 1) {
-    color_attr <- annotated_reference[,color_attr]
+    color_attr <- reference_df[,color_attr]
   }
 
-  idx_annotation <- which(apply(annotated_reference, 2, function(i) {
+  idx_annotation <- which(apply(reference_df, 2, function(i) {
     all(i == color_attr)
   }))
 
-  annotation_legend <- colnames(annotated_reference)[idx_annotation]
+  annotation_legend <- colnames(reference_df)[idx_annotation]
 
   if(is.character(sub_color_attr) & length(sub_color_attr) == 1) {
-    sub_color_attr <- annotated_reference[,sub_color_attr]
+    sub_color_attr <- reference_df[,sub_color_attr]
   }
 
   if(!is.null(sub_color_attr)) {
-    idx_sub_annotation <- which(apply(annotated_reference, 2, function(i) {
+    idx_sub_annotation <- which(apply(reference_df, 2, function(i) {
       all(i == sub_color_attr)
     }))
-    sub_annotation_legend <- colnames(annotated_reference)[idx_sub_annotation]
+    sub_annotation_legend <- colnames(reference_df)[idx_sub_annotation]
   } else {
     idx_sub_annotation <- NULL
   }
@@ -125,7 +125,7 @@ nearest_neighbor_annotation <- function(annotated_reference,
 
   n_nearest <- min(min(min_n_nearest), n_nearest)
 
-  if(n_nearest > 0.9*dim(annotated_reference)[1] & compute_means == FALSE) {
+  if(n_nearest > 0.9*dim(reference_df)[1] & compute_means == FALSE) {
     message('The number of nearest neighbours
             (computed as min(n_nearest, ((dim(distance_matrix)[2])-1)))
             is higher than 90% of the total clusters. It should be better to
@@ -141,7 +141,7 @@ nearest_neighbor_annotation <- function(annotated_reference,
 
   annotation_tables <- list()
 
-  clusters_to_exclude <- c(new_clusters, rownames(annotated_reference)[idxs_to_remove])
+  clusters_to_exclude <- c(new_clusters, rownames(reference_df)[idxs_to_remove])
 
   for(c in new_clusters) {
     dist <- distance_matrix[c,seq(2,dim(distance_matrix)[2])]
@@ -151,9 +151,9 @@ nearest_neighbor_annotation <- function(annotated_reference,
     dist <- dist[idxs]
     all_n <- all_n[seq(1,n_nearest)]
     dist <- dist[seq(1,n_nearest)]
-    annotated_reference_f <- annotated_reference[all_n[which(all_n %in% rownames(annotated_reference))],]
+    reference_df_f <- reference_df[all_n[which(all_n %in% rownames(reference_df))],]
 
-    names(dist) <- annotated_reference_f[,idx_annotation]
+    names(dist) <- reference_df_f[,idx_annotation]
 
     annotations <- value_table(dist,
                                perc = TRUE,
@@ -202,9 +202,9 @@ nearest_neighbor_annotation <- function(annotated_reference,
       all_n <- all_n[seq(1,n_nearest)]
       dist <- dist[seq(1,n_nearest)]
 
-      sub_annotated_reference_f <- annotated_reference[all_n[which(all_n %in% rownames(annotated_reference))],]
+      sub_reference_df_f <- reference_df[all_n[which(all_n %in% rownames(reference_df))],]
 
-      names(dist) <- sub_annotated_reference_f[,idx_sub_annotation]
+      names(dist) <- sub_reference_df_f[,idx_sub_annotation]
 
       sub_annotations <- value_table(dist,
                                      perc = TRUE,

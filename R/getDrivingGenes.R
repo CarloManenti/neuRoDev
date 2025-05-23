@@ -1,6 +1,6 @@
 #' Get genes driving the newly mapped points
 #'
-#' @param new_umap_obj The umap object coming from add_to_annotated_reference,
+#' @param new_umap_obj The umap object coming from add_to_reference,
 #' under `New$umap_obj`
 #' @param newSignatures The signatures of the new points
 #' @param n_genes The number of top genes for each new point to be returned
@@ -23,7 +23,7 @@
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 #' new_M <- reference_signatures_correlation(new_clusterS, refS)
-#' mapped <- add_to_annotated_reference(annotated_M,
+#' mapped <- add_to_reference(annotated_M,
 #' new_M,
 #' annotated_M$`Best.Assignment`)
 #' getDrivingGenes(mapped$New$umap_obj, new_clusterS)

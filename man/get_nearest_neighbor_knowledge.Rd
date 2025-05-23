@@ -5,7 +5,7 @@
 \title{Get nearest neighbor knowledge}
 \usage{
 get_nearest_neighbor_knowledge(
-  annotated_reference,
+  reference_df,
   new_clusters,
   umap_obj,
   color_attr,
@@ -18,7 +18,7 @@ get_nearest_neighbor_knowledge(
 )
 }
 \arguments{
-\item{annotated_reference}{The reference correlation matrix.}
+\item{reference_df}{The reference correlation matrix.}
 
 \item{new_clusters}{The new clusters names.}
 
@@ -38,7 +38,7 @@ to \code{((dim(distance_matrix)[2])-1)}, where distance_matrix is given by:
 
 \item{title}{The title to add to the plots}
 
-\item{to_exclude}{The labels inside \code{annotated_reference[,color_attr]}
+\item{to_exclude}{The labels inside \code{reference_df[,color_attr]}
 that the user doesn't want to consider.}
 
 \item{compute_means}{A boolean variable. If TRUE, it computes the mean instead
@@ -51,9 +51,9 @@ cluster, plus a Heatmap and a barplot if the label is a character, a boxplot
 for the whole distribution and one per new cluster if it is numeric
 }
 \description{
-Given an annotated reference dataframe annotated_reference,
+Given an annotated reference dataframe reference_df,
 a set of new clusters to analyze in new_clusters, a umap object as run
-with add_to_annotated_reference, which contains the new clusters to
+with add_to_reference, which contains the new clusters to
 analyze, and a given annotation label, it returns information about the
 nearest neighbors for each cluster and as a whole for that given
 annotation label. If remove_low_confidence=TRUE, it doesn't consider in the
@@ -73,7 +73,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-res <- add_to_annotated_reference(annotated_M,
+res <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 umap_obj <- res$New

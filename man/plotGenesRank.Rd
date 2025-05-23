@@ -26,7 +26,7 @@ plotGenesRank(
 }
 \arguments{
 \item{umap_obj}{A UMAP object as given by the umap_signature_plot function or
-by the add_to_annotated_reference function.
+by the add_to_reference function.
 It has to be an object that contains the following chain:
 \code{umap_obj$umap_obj$umap_out$layout}}
 
@@ -43,7 +43,7 @@ blues9 will be given (the darker the color, the higher the rank of the genes,
 so the higher the signature)}
 
 \item{new_clusters}{If the umap_obj contains also new clusters (if originated
-from add_to_annotated_reference, 'New'), and this new clusters want to be
+from add_to_reference, 'New'), and this new clusters want to be
 plotted bigger in the UMAP, their names have to be specified here}
 
 \item{title}{A title to give. If NULL, the names of the genes will be plotted}
@@ -92,7 +92,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-to_reference <- add_to_annotated_reference(annotated_M, new_M, rownames(annotated_M))
+to_reference <- add_to_reference(annotated_M, new_M, rownames(annotated_M))
 plotGenesRank(umap_obj = to_reference$New,
 genes = 'Gene-8',
 refExpression = S,

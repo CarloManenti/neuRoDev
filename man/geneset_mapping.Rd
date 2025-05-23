@@ -50,7 +50,7 @@ new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-mapping_obj <- add_to_annotated_reference(annotated_M,
+mapping_obj <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 anno_matrix <- matrix(runif(100,0,10), ncol = 10)

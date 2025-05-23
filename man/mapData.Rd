@@ -5,7 +5,7 @@
 \title{Map new data onto a reference network}
 \usage{
 mapData(
-  annotated_reference,
+  reference_df,
   new_profiles = NULL,
   new_signatures = NULL,
   reference_signatures,
@@ -17,7 +17,7 @@ mapData(
 )
 }
 \arguments{
-\item{annotated_reference}{The annotated reference correlation data frame}
+\item{reference_df}{The annotated reference correlation data frame}
 
 \item{new_profiles}{The profiles that have to be mapped (can directly provide
 signatures)}
@@ -40,7 +40,7 @@ color the clusters and label_attr to show the labels.}
 \item{col_vector}{The color vector palette. Should be a named vector where
 names correspond to the unique values in the color_attr vector.}
 
-\item{...}{Additional parameters given to \code{add_to_annotated_reference}}
+\item{...}{Additional parameters given to \code{add_to_reference}}
 }
 \value{
 The umap object and plot before and after adding the new clusters,
@@ -60,7 +60,7 @@ annotated_M <- reference_signatures_correlation(S, refS)
 new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
-mapData(annotated_reference = annotated_M,
+mapData(reference_df = annotated_M,
 new_signatures = new_clusterS,
 reference_signatures = refS,
 color_attr = 'Best.Assignment')

@@ -1,6 +1,6 @@
 #' Map new data onto a reference network
 #'
-#' @param annotated_reference The annotated reference correlation data frame
+#' @param reference_df The annotated reference correlation data frame
 #' @param new_profiles The profiles that have to be mapped (can directly provide
 #' signatures)
 #' @param new_signatures The signatures that have to be mapped (can be computed
@@ -15,7 +15,7 @@
 #' color the clusters and label_attr to show the labels.
 #' @param col_vector The color vector palette. Should be a named vector where
 #' names correspond to the unique values in the color_attr vector.
-#' @param ... Additional parameters given to `add_to_annotated_reference`
+#' @param ... Additional parameters given to `add_to_reference`
 #'
 #' @return The umap object and plot before and after adding the new clusters,
 #' plus mapping quality metrics and nearest neighbor annotation
@@ -32,11 +32,11 @@
 #' new_clusterS <- FC_signatures(matrix(runif(80,0,10), ncol = 4))
 #' rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 #' colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
-#' mapData(annotated_reference = annotated_M,
+#' mapData(reference_df = annotated_M,
 #' new_signatures = new_clusterS,
 #' reference_signatures = refS,
 #' color_attr = 'Best.Assignment')
-mapData <- function(annotated_reference,
+mapData <- function(reference_df,
                     new_profiles=NULL,
                     new_signatures=NULL,
                     reference_signatures,
@@ -76,7 +76,7 @@ mapData <- function(annotated_reference,
                                               refS = reference_signatures,
                                               warn = FALSE)
 
-  out <- add_to_annotated_reference(annotated_reference = annotated_reference,
+  out <- add_to_reference(reference_df = reference_df,
                                     signatures_cor = new_cor,
                                     color_attr = color_attr,
                                     label_attr = label_attr,

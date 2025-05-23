@@ -8,7 +8,7 @@ getMappingConfidence(mapped_obj, signatures_cor)
 }
 \arguments{
 \item{mapped_obj}{The full mapped object derived from umap_plot_same_layout or
-add_to_annotated_reference (containing both the New and Original elements)}
+add_to_reference (containing both the New and Original elements)}
 
 \item{signatures_cor}{The signature correlation matrix as defined in
 reference_signatures_correlation (but only the correlation values)}
@@ -34,7 +34,7 @@ new_clusterS <- FC_signatures(new_profiles)
 rownames(new_clusterS) <- paste0('Gene-', seq(1, dim(new_clusterS)[1]))
 colnames(new_clusterS) <- paste0('New-', seq(1, dim(new_clusterS)[2]))
 new_M <- reference_signatures_correlation(new_clusterS, refS)
-mapping <- add_to_annotated_reference(annotated_M,
+mapping <- add_to_reference(annotated_M,
 new_M,
 annotated_M$`Best.Assignment`)
 getMappingConfidence(mapped_obj = mapping, signatures_cor = new_M)
