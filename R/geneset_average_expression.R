@@ -2,8 +2,10 @@
 #'
 #' @param geneset_df The DF that specifies the wanted genesets
 #' @param pseudobulk The wanted pseudobulk expression
-#' @param genesets_annotations The column in which the genesets names are
-#' specified in `geneset_df`. Defaults to "AnnotationGroup"
+#' @param group A boolean. If TRUE (defualt), considers geneset annotation groups
+#' (AnnotationGroup column in geneset_df) and the TopGenesByGroup,
+#' otherwise it considers single Annotations (Annotation in geneset_df) and the
+#' specific leadingEdges.
 #' @param celltypes The column in which the celltypes are specified in
 #' `geneset_df`
 #' @param genes The column in which the wanted genes are specified in
@@ -27,22 +29,29 @@
 #' geneset_average_expression(anno_df, pseudo)
 geneset_average_expression <- function(geneset_df,
                                        pseudobulk,
-                                       genesets = 'AnnotationGroup',
-                                       celltypes = 'Class',
-                                       genes = 'TopGenesByGroup') {
+                                       group = TRUE,
+                                       celltypes = 'Class') {
+
+  if(group) {
+    genesets_annotations <- 'AnnotationGroup'
+    genes <- 'TopGenesByGroup'
+  } else {
+    genesets_annotations <- 'Annotation'
+    genes <- 'leadingEdges'
+  }
 
   if(is(pseudobulk, 'SingleCellExperiment')) {
     pseudobulk <- SingleCellExperiment::logcounts(pseudobulk)
   }
 
   geneset_matrix <- do.call(rbind, lapply(unique(interaction(geneset_df[,celltypes],
-                                                                geneset_df[,genesets])), function(i) {
+                                                                geneset_df[,genesets_annotations])), function(i) {
 
                                                                   i <- as.vector(i)
                                                                   ct <- unlist(lapply(strsplit(i, '.', fixed = TRUE), function(i) {i[1]}))
                                                                   ag <- unlist(lapply(strsplit(i, '.', fixed = TRUE), function(i) {i[2]}))
 
-                                                                  sub_anno_df <- geneset_df[which(geneset_df[,genesets] == ag & geneset_df[,celltypes] == ct),]
+                                                                  sub_anno_df <- geneset_df[which(geneset_df[,genesets_annotations] == ag & geneset_df[,celltypes] == ct),]
                                                                   all_genes <- unlist(strsplit(sub_anno_df[,genes], '-', fixed = TRUE))
 
                                                                   sub_exp <- pseudobulk[all_genes,]
@@ -52,7 +61,7 @@ geneset_average_expression <- function(geneset_df,
                                                                 }))
 
   rownames(geneset_matrix) <- unique(interaction(geneset_df[,celltypes],
-                                                 geneset_df[,genesets]))
+                                                 geneset_df[,genesets_annotations]))
 
   return(geneset_matrix)
 
