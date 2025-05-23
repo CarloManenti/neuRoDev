@@ -69,7 +69,7 @@ reference_signatures_correlation <- function(S,
           if (!is.null(names(refS))) {
             colnames(t_c) <- paste(names(refS)[y], colnames(t_c), sep = '.')
           }
-          df_cells <- assign('df_cells', cbind(df_cells, t_c), envir = '.GlobalEnv')
+          df_cells <<- cbind(df_cells, t_c)
 
           lapply(seq_len(ncol(c)), function(z) {
             res <- c[, z]
