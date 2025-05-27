@@ -40,7 +40,7 @@ Please use the [issues] to submit bug reports.
 
 # Reference
 
-If you use `neuRoDev` in your work, please cite
+If you use `neuRoDev` or `neuRoDevDB` in your work, please cite
 
 > **Developmental single-cell transcriptomic networks dissect neuronal and glial genesis and maturation in the human cortex**
 >
