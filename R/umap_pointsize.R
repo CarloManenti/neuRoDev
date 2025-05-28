@@ -133,9 +133,9 @@ umap_pointsize <- function(layout,
     if(!is.null(edges) & show_edges) {
       p <- p +
            ggplot2::geom_segment(data=edges,
-                                 ggplot2::aes(x=from.x,
+                                 ggplot2::aes(x= from.x,
                                      xend = to.x,
-                                     y=from.y,
+                                     y= from.y,
                                      yend = to.y),
                                  colour=edges_color,
                                  na.rm = TRUE,
@@ -174,9 +174,9 @@ umap_pointsize <- function(layout,
     if(!is.null(edges) & show_edges) {
 
       p <- p + ggplot2::geom_segment(data=edges,
-                                     ggplot2::aes(x=from.x,
+                                     ggplot2::aes(x= from.x,
                                          xend = to.x,
-                                         y=from.y,
+                                         y= from.y,
                                          yend = to.y),
                                      colour=edges_color,
                                      na.rm = TRUE,

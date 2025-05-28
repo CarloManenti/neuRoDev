@@ -1,7 +1,7 @@
 ---
 title: "neuRoDev"
 author: "Erik Bot"
-date: "2024-01-24"
+date: "2025-05-25"
 output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{neuRoDev}
@@ -16,10 +16,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(neuRoDev)
-```
-
 ```{r style, echo = FALSE, results = 'asis'}
 library(BiocStyle)
 ```
@@ -28,114 +24,43 @@ library(BiocStyle)
 library(knitr)
 ```
 
-Defining a sample single-cell RNA seq object
+neuRoDev is an R package that provides analysis tools to make use of the 
+integrated transcriptomic references of cortex development, described in 
+[Zonca&, Bot&, and Davila-Velderrain, 2025].
 
-```{r}
-set.seed(123)
-n_cells <- 1000
-n_genes <- 1000
-counts1 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
-colnames(counts1) <- paste0('Cell-One-', seq(1,dim(counts1)[2]))
-rownames(counts1) <- paste0('Gene-', seq(1,dim(counts1)[1]))
+All the datasets needed as input are stored in the neuRoDevDB package.
 
-counts2 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
-colnames(counts2) <- paste0('Cell-Two-', seq(1,dim(counts2)[2]))
-rownames(counts2) <- paste0('Gene-', seq(1,dim(counts2)[1]))
+All the main functionalities of neuRoDev are extensively described in a [Tutorial], 
+at the following link: https://github.com/davilavelderrainlab/neuRoDev
 
-counts3 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
-colnames(counts3) <- paste0('Cell-Three-', seq(1,dim(counts3)[2]))
-rownames(counts3) <- paste0('Gene-', seq(1,dim(counts3)[1]))
+neuRoDev contains functions to perform:
 
-counts <- list('One' = counts1, 'Two' = counts2, 'Three' = counts3)
-```
+- Reference networks exploration ([Network exploration])
+- Expression enrichment and specificity ([Analysis tools])
+- Gene sets significance analysis ([Gene set networks])
+- Single-cell RNAseq datasets mapping ([Mapping scRNAseq])
+- Bulk RNAseq datasets mapping ([Mapping bulkRNAseq])
 
-Now subsample, cluster and get the signatures of the single-cell expM
+If you use `neuRoDev` or `neuRoDevDB` in your work, please cite
 
-```{r, results='hide', message=FALSE}
-summary_single_cell <- getClusterSignatures(expression_matrix = counts, subsample = TRUE)
-```
+> **Developmental single-cell transcriptomic networks dissect neuronal and glial genesis and maturation in the human cortex**
+>
+> Asia Zonca&, Erik Bot&, and José Davila-Velderrain
+>
+> _Journal_ Date. doi: [doi](https://github.com/davilavelderrainlab/neuRoDev).
 
-```{r}
-seurat_objects <- summary_single_cell$SeuratObject
-summary_single_cell <- summary_single_cell$Summary
-```
+[Zonca&, Bot&, and Davila-Velderrain, 2025]: https://github.com/davilavelderrainlab/neuRoDev
+[neuRoDevDB]: https://github.com/davilavelderrainlab/neuRoDevDB
+[Network exploration]: https://github.com/davilavelderrainlab/neuRoDev
+[Analysis tools]: https://github.com/davilavelderrainlab/neuRoDev
+[Gene set networks]: https://github.com/davilavelderrainlab/neuRoDev
+[Mapping scRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
+[Mapping bulkRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
+[Tutorial]: https://github.com/davilavelderrainlab/neuRoDev
+[article]: https://github.com/davilavelderrainlab/neuRoDev
+[issues]: https://github.com/davilavelderrainlab/neuRoDev/issues
 
-
-Now we define some reference signatures. For the sake of simplicity, 
-the reference signatures will be the last 4 signatures of the original data and
-will be removed from it.
-
-```{r}
-clusterS <- do.call(cbind, lapply(seq(1,length(summary_single_cell)), function(i) {S <- summary_single_cell[[i]]$S
-                      colnames(S) <- paste0(i, '-', seq(1, dim(S)[2]))
-                      return(S)}))
-
-celltypeS <- clusterS[,seq((dim(clusterS)[2]-3),dim(clusterS)[2])]
-colnames(celltypeS) <- c('Ex', 'Glia', 'In', 'Progenitors')
-```
-
-Now we can compute the correlation between the two
-
-```{r, results='hide', message=FALSE}
-single_cell_cor <- reference_signatures_correlation(S = clusterS, refS = celltypeS)
-```
-
-Now plot the UMAP
-
-```{r, results='hide', message=FALSE}
-single_cell_umap <- umap_signature_plot(signatures_cor = single_cell_cor, color_attr = single_cell_cor$`Best.Assignment`, label_attr = single_cell_cor$`Best.Assignment`)
-```
-
-```{r}
-single_cell_umap$umap_plot
-```
-
-Now we assume that this is the reference expM and we add new clusters which
-are not curated
-
-```{r}
-counts4 <- matrix(data = rpois(n_cells * n_genes, lambda = 1), ncol = n_genes)
-colnames(counts4) <- paste0('Cell-Four-', seq(1,dim(counts4)[2]))
-rownames(counts4) <- paste0('Gene-', seq(1,dim(counts4)[1]))
-```
-
-```{r, results='hide', message=FALSE}
-summary_new <- getClusterSignatures(expression_matrix = counts4, subsample=TRUE)
-new_seu_objects <- summary_new$SeuratObject
-summary_new <- summary_new$Summary
-```
-
-```{r}
-newS <- summary_new$S
-
-colnames(newS) <- paste0('New', colnames(newS))
-
-new_cor <- reference_signatures_correlation(newS, celltypeS)
-```
-
-Now we can plot the new clusters over the previously defined UMAP
-
-```{r, results='hide', message=FALSE}
-new_to_reference <- add_to_reference(reference_df = single_cell_cor, signatures_cor = new_cor, color_attr = single_cell_cor$`Best.Assignment`)
-```
-
-```{r, message = FALSE}
-new_to_reference$Original$umap_plot
-new_to_reference$New$umap_plot
-```
-
-Now we can analyze the characteristics of the nearest neighbors
-
-```{r, results='hide', message=FALSE}
-new_best_annotation <- nearest_neighbor_annotation(single_cell_cor, rownames(new_cor), new_to_reference$New, 'Best.Assignment')
-```
-
-```{r, message=FALSE}
-new_best_annotation$`Barplot-Annotation`
-new_best_annotation$`Heatmap-Annotation`
-```
-
-```{r}
+```{r, echo=FALSE, message=FALSE, eval=FALSE}
 sessionInfo()
 ```
 

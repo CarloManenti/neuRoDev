@@ -167,7 +167,7 @@ nearest_neighbor_annotation <- function(reference_df,
 
   df$Var2 <- factor(df$Var2, levels = gtools::mixedsort(unique(as.vector(df$Var2)), decreasing = TRUE))
 
-  plot <- ggplot2::ggplot(df, ggplot2::aes(x = Var1,
+  plot <- ggplot2::ggplot(data = df, ggplot2::aes(x = Var1,
                          y = value,
                          fill = Var2)) +
     ggplot2::geom_bar(stat = "identity")    +
