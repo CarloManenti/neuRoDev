@@ -1,5 +1,5 @@
 Package: neuRoDev
-Title: Integrates starting datasets to create and analyze a UMAP, on which new data can be mapped
+Title: Analysis of corticogenesis, neurogenesis, and gliogenesis reference networks
 Version: 0.0.1
 Depends: R (>= 4.1.0)
 Authors@R: 
@@ -13,27 +13,17 @@ RoxygenNote: 7.3.2
 Imports:
 	ggplot2,
 	Matrix,
+	MatrixGenerics,
 	umap,
 	igraph,
 	ggrepel,
-	Polychrome,
-	dplyr,
 	reshape2,
 	S4Vectors,
-	Seurat,
-	ComplexHeatmap,
 	stats,
 	gtools,
-	grid,
-	plotly,
-	methods,
-	grDevices,
-	fgsea,
-	SemNetCleaner,
-	limma,
 	SingleCellExperiment,
-	pathviewr,
-	scran
+	graphics,
+	grDevices
 Suggests:
     knitr,
     rmarkdown,

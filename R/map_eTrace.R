@@ -1,0 +1,215 @@
+#' Map new profiles to the eTraces
+#'
+#' @inheritParams plot_eTrace
+#' @param mapped_obj The result of `mapNetwork`
+#' @param n_nearest The number of nearest neighbors to consider to derive the x
+#' and y coordinates of the new points
+#' @param together A boolean, if FALSE the eTraces plots will be generated for
+#' each mapped point. Defaults to TRUE
+#' @param new_colors The color(s) of the new points
+#'
+#' @return The plot of the eTraces divided into two subplots, with the new points
+#' highlighted
+#' @export
+#'
+#' @examples
+map_eTrace <- function(net,
+                       mapped_obj,
+                       genes = NULL,
+                       score = NULL,
+                       nRand=100,
+                       main=NULL,
+                       n_nearest = 15,
+                       expression_enrichment = FALSE,
+                       together = TRUE,
+                       ylab = "score",
+                       new_colors = 'red',
+                       upper_colors = NULL,
+                       lower_colors = NULL) {
+
+  if(is.null(upper_colors)) {
+    upper_colors <- net$Stages_colors
+    derived_stage_color <- annotateMapping(net,
+                                           new_cor = mapped_obj$new_cor,
+                                           color_attr = 'Stages',
+                                           col_vector = 'Stages_colors',
+                                           n_nearest = n_nearest)
+    derived_stage_color <- net$Stages_colors[derived_stage_color$Best.Annotation]
+  } else {
+    if(length(new_colors) != ncol(mapped_obj$new_cor)) {
+      derived_stage_color <- rep(new_colors, ncol(mapped_obj$new_cor))
+    } else {
+      derived_stage_color <- new_colors
+    }
+    names(derived_stage_color) <- colnames(mapped_obj$new_cor)
+  }
+
+  if(is.null(lower_colors)) {
+    lower_colors <- net$SubClass_colors
+    derived_subclass_color <- annotateMapping(net,
+                                              new_cor = mapped_obj$new_cor,
+                                              color_attr = 'SubClass',
+                                              col_vector = 'SubClass_colors',
+                                              n_nearest = n_nearest)
+    derived_subclass_color <- net$Stages_colors[derived_subclass_color$Best.Annotation]
+  } else {
+    if(length(new_colors) != ncol(mapped_obj$new_cor)) {
+      derived_subclass_color <- rep(new_colors, ncol(mapped_obj$new_cor))
+    } else {
+      derived_subclass_color <- new_colors
+    }
+    names(derived_subclass_color) <- colnames(mapped_obj$new_cor)
+  }
+
+
+  if(is.null(genes)) {
+    genes <- rownames(net)
+  }
+
+  if(expression_enrichment) {
+    eTrace <- get_eTrace(net = net, genes = genes, nRand = nRand)
+    ylab <- "expression enrichment (z)"
+  } else {
+    if(is.null(score)) {
+      if(length(genes) == 1) {
+        eTrace <- S4Vectors::List(z = SingleCellExperiment::logcounts(net)[genes,])
+      } else {
+        eTrace <- S4Vectors::List(z = Matrix::colMeans(SingleCellExperiment::logcounts(net)[genes,]))
+      }
+      ylab <- 'logcounts'
+    } else {
+      if(is.matrix(score)) {
+        if(length(genes) == 1) {
+          eTrace <- S4Vectors::List(z = score[genes,])
+        } else {
+          eTrace <- S4Vectors::List(z = Matrix::colMeans(score[genes,]))
+        }
+      } else {
+        eTrace <- S4Vectors::List(z = score)
+      }
+    }
+  }
+
+  xs <- seq(1,ncol(net))
+  names(xs) <- colnames(net)
+
+  ys <- eTrace$z
+  names(ys) <- colnames(net)
+  if(all(ys >= 0)) {
+    col_zero_line <- NA
+  } else {
+    col_zero_line <- 'black'
+  }
+
+  derived_x <- apply(mapped_obj$new_cor, 2, function(i) {
+    cors <- sort(i, decreasing = TRUE)[seq(1,n_nearest)]
+    new_x <- stats::weighted.mean(xs[names(cors)], cors)
+  })
+
+  derived_y <- apply(mapped_obj$new_cor, 2, function(i) {
+    cors <- sort(i, decreasing = TRUE)[seq(1,n_nearest)]
+    new_y <- stats::weighted.mean(ys[names(cors)], cors)
+  })
+
+  derived_subclass_color <- annotateMapping(net,
+                                            new_cor = mapped_obj$new_cor,
+                                            color_attr = 'SubClass',
+                                            col_vector = 'SubClass_colors',
+                                            n_nearest = n_nearest)
+
+  derived_subclass_color <- net$SubClass_colors[derived_subclass_color$Best.Annotation]
+
+  sizes <- rep(1, length(ys))
+
+  derived_sizes <- apply(mapped_obj$new_cor, 2, function(i) {
+    new_size <- (mean(sort(i, decreasing = TRUE)[seq(1,n_nearest)])+1)
+  })
+
+  final_xs <- c(xs, derived_x)
+  final_ys <- c(ys, derived_y)
+  final_sizes <- c(sizes, derived_sizes)
+
+  alphas <- c(rep(0.5, length(ys)), 1)
+
+  nat_idx <- which(net$Stages == '6-early_infancy')[1]
+  y_idx <- min(eTrace$z)+abs(min(eTrace$z))*0.05
+
+  if(together) {
+    graphics::par(mfrow=c(2,1))
+    graphics::par(mar=c(0,5,2,2))
+    plot(final_xs,
+         final_ys,
+         pch=c(rep(21, length(ys)), rep(22, length(derived_y))),
+         bg=scales::alpha(c(upper_colors, derived_stage_color), c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         col=scales::alpha(c(upper_colors, rep('black', length(derived_x))), c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         main=main,
+         ylab=ylab,
+         cex = final_sizes,
+         xaxt = 'n',
+         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))))
+    graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
+    graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
+    graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
+    graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
+    graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
+    graphics::text(x = derived_x, y = derived_y, labels = colnames(mapped_obj$new_cor), pos = 3, cex = 0.8)
+
+    graphics::par(mar=c(2.5,5,0.5,2))
+    plot(final_xs,
+         final_ys,
+         pch=c(rep(21, length(ys)), rep(22, length(derived_y))),
+         bg=scales::alpha(c(lower_colors, derived_subclass_color), c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         col=scales::alpha(c(lower_colors, rep('black', length(derived_x))), c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         main=main,
+         ylab=ylab,
+         cex = final_sizes,
+         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))))
+    graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
+    graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
+    graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
+    graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
+    graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
+    graphics::text(x = derived_x, y = derived_y, labels = colnames(mapped_obj$new_cor), pos = 3, cex = 0.8)
+  } else {
+    plots <- lapply(seq(1, length(derived_x)), function(i) {
+      graphics::par(mfrow=c(2,1))
+      graphics::par(mar=c(0,5,2,2))
+      plot(c(xs, derived_x[i]), c(ys, derived_y[i]), pch=c(rep(21, length(ys)), 22),
+           bg=scales::alpha(c(upper_colors, derived_stage_color), 0.5),
+           col=scales::alpha(c(upper_colors, 'black'), c(rep(0.5, length(ys)), 1)),
+           main=main,
+           ylab=ylab,
+           cex = final_sizes,
+           xaxt = 'n',
+           lwd = c(rep(1, length(ys)), 2))
+      graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
+      graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
+      graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
+      graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
+      graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
+      graphics::text(x = derived_x[i], y = derived_y[i], labels = colnames(mapped_obj$new_cor)[i], pos = 3, cex = 0.8)
+
+      graphics::par(mar=c(2.5,5,0.5,2))
+      plot(c(xs, derived_x[i]), c(ys, derived_y[i]),
+           pch=c(rep(21, length(ys)), 22),
+           bg=scales::alpha(c(lower_colors, derived_subclass_color), 0.5),
+           col=scales::alpha(c(lower_colors, 'black'), c(rep(0.5, length(ys)), 1)),
+           main=main,
+           ylab=ylab,
+           cex = final_sizes,
+           xaxt = 'n',
+           lwd = c(rep(1, length(ys)), 2))
+      graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
+      graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
+      graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
+      graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
+      graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
+      graphics::text(x = derived_x[i], y = derived_y[i], labels = colnames(mapped_obj$new_cor)[i], pos = 3, cex = 0.8)
+      p <- grDevices::recordPlot()
+    })
+
+    names(plots) <- colnames(mapped_obj$new_cor)
+
+    return(plots)
+  }
+}
