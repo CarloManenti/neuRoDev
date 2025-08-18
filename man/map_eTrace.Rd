@@ -18,7 +18,8 @@ map_eTrace(
   new_colors = NULL,
   upper_colors = NULL,
   lower_colors = NULL,
-  jitter = TRUE
+  jitter = TRUE,
+  factor = 200
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ each mapped point. Defaults to TRUE}
 
 \item{jitter}{A boolean, if TRUE (default), it adds a random noise to place
 the labels of new points a bit further apart. New runs lead to new positions}
+
+\item{factor}{How wide jitter should be. Defaults to 200}
 }
 \value{
 The plot of the eTraces divided into two subplots, with the new points

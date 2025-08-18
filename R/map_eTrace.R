@@ -9,6 +9,7 @@
 #' @param new_colors The color(s) of the new points
 #' @param jitter A boolean, if TRUE (default), it adds a random noise to place
 #' the labels of new points a bit further apart. New runs lead to new positions
+#' @param factor How wide jitter should be. Defaults to 200
 #'
 #' @return The plot of the eTraces divided into two subplots, with the new points
 #' highlighted
@@ -60,7 +61,8 @@ map_eTrace <- function(net,
                        new_colors = NULL,
                        upper_colors = NULL,
                        lower_colors = NULL,
-                       jitter = TRUE) {
+                       jitter = TRUE,
+                       factor=200) {
 
   if(is.null(upper_colors)) {
     upper_colors <- net$Stages_color
@@ -209,15 +211,18 @@ map_eTrace <- function(net,
     usr <- usr - usr/50
 
     if(jitter) {
-      offset_x <- jitter(rep(0, length(derived_x)), factor = 200)
+      offset_x <- jitter(rep(0, length(derived_x)), factor = factor)
       offset_x[which(derived_x > stats::quantile(final_xs, 0.9) & offset_x > 0)] <- offset_x[which(derived_x > stats::quantile(final_xs, 0.9) & offset_x > 0)] * -1
       offset_x[which(derived_x < stats::quantile(final_xs, 0.1) & offset_x < 0)] <- offset_x[which(derived_x < stats::quantile(final_xs, 0.1) & offset_x < 0)] * -1
-      offset_y <- jitter(rep(0, length(derived_y)), factor = 200)
+      offset_y <- jitter(rep(0, length(derived_y)), factor = factor)
       offset_y[which(derived_y > stats::quantile(final_ys, 0.9) & offset_y > 0)] <- offset_y[which(derived_y > stats::quantile(final_ys, 0.9) & offset_y > 0)] * -1
       offset_y[which(derived_y < stats::quantile(final_ys, 0.1) & offset_y < 0)] <- offset_y[which(derived_y < stats::quantile(final_ys, 0.1) & offset_y < 0)] * -1
+
+      new_x <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
+      new_y <- pmin(pmax(derived_y + offset_y, usr[3]), usr[4])
     } else {
-      offset_x <- 0
-      offset_y <- 0
+      new_x <- derived_x
+      new_y <- derived_y
     }
 
     new_x <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
@@ -249,14 +254,11 @@ map_eTrace <- function(net,
     graphics::lines(stats::smooth.spline(seq(1, ncol(net)), eTrace$z, spar = 1),
                     col = "red", lwd = 2.5)
 
-    new_x2 <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
-    new_y2 <- pmin(pmax(derived_y + offset_y, usr[3]), usr[4])
-
     graphics::segments(x0 = derived_x, y0 = derived_y,
-             x1 = new_x2, y1 = new_y2,
+             x1 = new_x, y1 = new_y,
              col = "grey40", lty = 1)
 
-    graphics::text(new_x2, new_y2, labels = colnames(mapped_obj$new_cor), cex = 0.8)
+    graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8)
   } else {
     plots <- lapply(seq(1, length(derived_x)), function(i) {
       graphics::par(mfrow=c(2,1))
