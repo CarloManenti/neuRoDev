@@ -220,16 +220,18 @@ map_eTrace <- function(net,
 
       new_x <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
       new_y <- pmin(pmax(derived_y + offset_y, usr[3]), usr[4])
+      pos <- NULL
     } else {
       new_x <- derived_x
       new_y <- derived_y
+      pos <- 3
     }
 
     graphics::segments(x0 = derived_x, y0 = derived_y,
              x1 = new_x, y1 = new_y,
              col = "grey40", lty = 1)
 
-    graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8)
+    graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8, pos = pos)
 
     graphics::par(mar = c(2.5, 5, 0.5, 2))
     plot(final_xs, final_ys,
@@ -255,7 +257,7 @@ map_eTrace <- function(net,
              x1 = new_x, y1 = new_y,
              col = "grey40", lty = 1)
 
-    graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8)
+    graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8, pos = pos)
   } else {
     plots <- lapply(seq(1, length(derived_x)), function(i) {
       graphics::par(mfrow=c(2,1))
