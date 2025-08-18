@@ -225,9 +225,6 @@ map_eTrace <- function(net,
       new_y <- derived_y
     }
 
-    new_x <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
-    new_y <- pmin(pmax(derived_y + offset_y, usr[3]), usr[4])
-
     graphics::segments(x0 = derived_x, y0 = derived_y,
              x1 = new_x, y1 = new_y,
              col = "grey40", lty = 1)
