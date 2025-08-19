@@ -54,12 +54,26 @@ plotNetworkScore <- function(net,
                              n_nearest = 15,
                              normalize = TRUE,
                              na.vec = NULL,
-                             palette = grDevices::blues9,
+                             palette = 'blues9',
                              title=NULL,
                              show_edges = TRUE,
                              stroke = 0.5,
                              fix_alpha = FALSE,
                              max_size = 3) {
+
+  if (palette %in% c("greys", "inferno", "magma", "viridis", "BlGrRd", "RdYlBu", "Spectral", "blues9")) {
+    palette <- switch(palette,
+                      greys = grDevices::gray.colors(100),
+                      inferno = viridis::inferno(500, alpha = 0.8),
+                      magma = viridis::magma(500,alpha = 0.8),
+                      viridis = viridis::viridis(500, alpha = 0.8),
+                      BlGrRd = (grDevices::colorRampPalette(c("blue", "grey", "red")))(500),
+                      Spectral = (grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(n = 7, name = "Spectral"))))(100),
+                      RdYlBu = (grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(n = 7, name = "RdYlBu"))))(100),
+                      blues9 = grDevices::blues9)
+  } else {
+    palette <- (grDevices::colorRampPalette(palette))(500)
+  }
 
   if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(SingleCellExperiment::colData(net))) {
     label_attr <- SingleCellExperiment::colData(net)[,label_attr]

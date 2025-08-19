@@ -62,7 +62,11 @@ map_eTrace <- function(net,
                        upper_colors = NULL,
                        lower_colors = NULL,
                        jitter = TRUE,
-                       factor=200) {
+                       factor=NULL) {
+
+  if(ncol(mapped_obj$new_cor) == 2) {
+    jitter <- FALSE
+  }
 
   if(is.null(upper_colors)) {
     upper_colors <- net$Stages_color
@@ -207,16 +211,20 @@ map_eTrace <- function(net,
     graphics::lines(stats::smooth.spline(seq(1, ncol(net)), eTrace$z, spar = 1),
                     col = "red", lwd = 2.5)
 
-    usr <- graphics::par("usr")
-    usr <- usr - usr/50
-
     if(jitter) {
+
+      usr <- graphics::par("usr")
+      usr <- usr - usr/25
+
+      if(is.null(factor)) {
+        factor <- length(derived_x) * 10
+      }
       offset_x <- jitter(rep(0, length(derived_x)), factor = factor)
-      offset_x[which(derived_x > stats::quantile(final_xs, 0.9) & offset_x > 0)] <- offset_x[which(derived_x > stats::quantile(final_xs, 0.9) & offset_x > 0)] * -1
-      offset_x[which(derived_x < stats::quantile(final_xs, 0.1) & offset_x < 0)] <- offset_x[which(derived_x < stats::quantile(final_xs, 0.1) & offset_x < 0)] * -1
+      offset_x[which(derived_x > stats::quantile(final_xs, 0.8) & offset_x > 0)] <- offset_x[which(derived_x > stats::quantile(final_xs, 0.8) & offset_x > 0)] * -1
+      offset_x[which(derived_x < stats::quantile(final_xs, 0.2) & offset_x < 0)] <- offset_x[which(derived_x < stats::quantile(final_xs, 0.2) & offset_x < 0)] * -1
       offset_y <- jitter(rep(0, length(derived_y)), factor = factor)
-      offset_y[which(derived_y > stats::quantile(final_ys, 0.9) & offset_y > 0)] <- offset_y[which(derived_y > stats::quantile(final_ys, 0.9) & offset_y > 0)] * -1
-      offset_y[which(derived_y < stats::quantile(final_ys, 0.1) & offset_y < 0)] <- offset_y[which(derived_y < stats::quantile(final_ys, 0.1) & offset_y < 0)] * -1
+      offset_y[which(derived_y > stats::quantile(final_ys, 0.8) & offset_y > 0)] <- offset_y[which(derived_y > stats::quantile(final_ys, 0.8) & offset_y > 0)] * -1
+      offset_y[which(derived_y < stats::quantile(final_ys, 0.2) & offset_y < 0)] <- offset_y[which(derived_y < stats::quantile(final_ys, 0.2) & offset_y < 0)] * -1
 
       new_x <- pmin(pmax(derived_x + offset_x, usr[1]), usr[2])
       new_y <- pmin(pmax(derived_y + offset_y, usr[3]), usr[4])
@@ -228,8 +236,8 @@ map_eTrace <- function(net,
     }
 
     graphics::segments(x0 = derived_x, y0 = derived_y,
-             x1 = new_x, y1 = new_y,
-             col = "grey40", lty = 1)
+                       x1 = new_x, y1 = new_y,
+                       col = "grey40", lty = 1)
 
     graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8, pos = pos)
 
@@ -254,8 +262,8 @@ map_eTrace <- function(net,
                     col = "red", lwd = 2.5)
 
     graphics::segments(x0 = derived_x, y0 = derived_y,
-             x1 = new_x, y1 = new_y,
-             col = "grey40", lty = 1)
+                       x1 = new_x, y1 = new_y,
+                       col = "grey40", lty = 1)
 
     graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8, pos = pos)
   } else {

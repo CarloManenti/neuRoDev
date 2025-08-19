@@ -13,7 +13,7 @@ plotNetworkScore(
   n_nearest = 15,
   normalize = TRUE,
   na.vec = NULL,
-  palette = grDevices::blues9,
+  palette = "blues9",
   title = NULL,
   show_edges = TRUE,
   stroke = 0.5,

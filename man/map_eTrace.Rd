@@ -19,7 +19,7 @@ map_eTrace(
   upper_colors = NULL,
   lower_colors = NULL,
   jitter = TRUE,
-  factor = 200
+  factor = NULL
 )
 }
 \arguments{

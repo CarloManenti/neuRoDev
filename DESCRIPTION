@@ -24,7 +24,9 @@ Imports:
 	graphics,
 	grDevices,
 	Polychrome,
-	scales
+	scales,
+	RColorBrewer,
+	viridis
 Suggests:
     knitr,
     rmarkdown,
