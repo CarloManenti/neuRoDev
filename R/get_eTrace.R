@@ -44,7 +44,7 @@ get_eTrace <- function(net,
                        nRand=100) {
 
   if(!all(genes %in% rownames(net))) {
-    message(genes[which(!genes %in% rownames(net))], ' not in `net`')
+    message(paste0(genes[which(!genes %in% rownames(net))], collapse = '-'), ' not in `net`')
     genes <- genes[which(genes %in% rownames(net))]
     if(length(genes) == 0) {
       return('No gene in `net`')

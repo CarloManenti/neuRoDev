@@ -136,6 +136,7 @@ plotNetworkScore <- function(net,
                                    n_nearest_smooth = n_nearest)
 
     new_score <- new_score[names(score)]
+    new_score[which(is.na(new_score))] <- score[which(is.na(new_score))]
     score <- new_score
 
   }
@@ -144,37 +145,10 @@ plotNetworkScore <- function(net,
     na.vec <- rep(1, length(score))
   }
 
-  breakpoints <- stats::quantile(seq((min(score[which(!is.na(na.vec))]) * rounder(1/min(score[which(!is.na(na.vec))]))),
-                                     (max(score[which(!is.na(na.vec))]) * rounder(1/min(score[which(!is.na(na.vec))])))),
-                                 probs = seq(0, 1, length.out = length(palette)+1))
-  breakpoints[which.min(breakpoints)] <- breakpoints[which.min(breakpoints)] - 1
-  breakpoints[which.max(breakpoints)] <- breakpoints[which.max(breakpoints)] + 1
-  col_vector <- as.vector(cut(score * rounder(1/min(score)), breaks = breakpoints, labels = palette))
-
-  if(any(is.na(na.vec))) {
-    col_vector[which(is.na(na.vec))] <- NA
-  }
-  names(col_vector) <- score
-  col_vector <- col_vector[order(score)]
-
-  color_attr <- label_attr
-
-  layout <- cbind(net$X_coord, net$Y_coord)
-  rownames(layout) <- colnames(net)
-  size <- rep(max(max_size, 100/dim(layout)[1]), dim(layout)[1])
-  layout <- cbind(layout, Size = size)
-  layout <- cbind(layout, Colors = col_vector[as.character(score)])
-  layout <- cbind(layout, Group = col_vector[as.character(score)])
-  if(!is.null(label_attr)) {
-    layout <- cbind(layout, SubGroup = color_attr)
-  }
-
   alpha <- min_max_normalize(score)
 
-  if(any(is.na(col_vector))) {
-    alpha[order(score)][which(is.na(col_vector))] <- 0
-  }
   min_maxed_score <- alpha
+
   if(fix_alpha) {
     alpha <- NULL
   }
@@ -192,30 +166,125 @@ plotNetworkScore <- function(net,
   })
   edges$weight <- as.numeric(weights)
 
-  if(!is.null(label_attr)) {
-    p <- plot_net(layout = layout,
-                  color_attr = layout[,"Colors"],
-                  label_attr = layout[,"SubGroup"],
-                  title = title,
-                  legend = FALSE,
-                  only_new_points = FALSE,
-                  alpha = alpha,
-                  edges = edges,
-                  show_edges = show_edges,
-                  stroke = stroke)
-  } else {
-    p <- plot_net(layout = layout,
-                  color_attr = layout[,"Colors"],
-                  label_attr = label_attr,
-                  title = title,
-                  legend = FALSE,
-                  only_new_points = FALSE,
-                  alpha = alpha,
-                  edges = edges,
-                  show_edges = show_edges,
-                  stroke = stroke)
+  layout <- data.frame('x' = net$X_coord, 'y' = net$Y_coord)
+  rownames(layout) <- colnames(net)
+  if(is.null(label_attr)) {
+    label_attr <- rep(NA, nrow(layout))
+  }
+  layout$labels <- label_attr
+  layout$fill <- score
+  layout$color <- score
+  if(is.null(alpha)) {
+    alpha <- rep(1, nrow(layout))
+  }
+  layout$trans <- alpha
+  size <- rep(max(max_size, 100/dim(layout)[1]), dim(layout)[1])
+  layout$size <- size
+  layout <- layout[order(score, decreasing = FALSE),]
+
+  custom_theme <- ggplot2::theme(
+    axis.title       = ggplot2::element_blank(),
+    axis.text        = ggplot2::element_blank(),
+    axis.ticks       = ggplot2::element_blank(),
+    legend.background = ggplot2::element_blank(),
+    legend.key       = ggplot2::element_blank(),
+    legend.title     = ggplot2::element_blank(),
+    panel.background = ggplot2::element_blank(),
+    panel.grid       = ggplot2::element_blank(),
+    plot.background  = ggplot2::element_rect(fill = "white", colour = NA),
+    plot.margin      = ggplot2::margin(1, 1, 1, 1, unit = "lines"),
+    plot.title       = ggplot2::element_text(
+      size = 16,
+      face = "bold",
+      hjust = 0.5
+    )
+  )
+
+  p <- ggplot2::ggplot()
+
+  if(!is.null(edges) & show_edges) {
+    p <- p + ggplot2::geom_segment(data = edges, ggplot2::aes(x = from.x,
+                                                              xend = to.x,
+                                                              y = from.y,
+                                                              yend = to.y),
+                                   colour = 'grey',
+                                   na.rm = TRUE,
+                                   linewidth = edges$weight*(min(1, stroke+0.5)),
+                                   alpha = edges$weight/max(edges$weight))
   }
 
+  p <- p + ggplot2::geom_point(data = layout, mapping = ggplot2::aes(x = x,
+                                                                     y = y,
+                                                                     color = color,
+                                                                     fill = fill,
+                                                                     alpha = trans),
+                               size = layout$size,
+                               shape = 21,
+                               stroke = stroke,
+                               show.legend = FALSE)
+
+  p <- p + ggplot2::scale_fill_gradientn(colors = palette,
+                                         na.value = "#CCCCCC", guide = "colourbar", aesthetics = "fill") +
+    ggplot2::scale_colour_gradientn(colors = colorspace::darken(palette, 0.1), na.value = "#CCCCCC",
+                                    guide = NULL,
+                                    aesthetics = "colour")
+
+  p <- p + ggplot2::theme(legend.text = ggplot2::element_text(size = 10))
+
+  p <- p + ggplot2::scale_alpha_identity() + custom_theme +
+    ggplot2::labs(fill = "cat") +
+    ggplot2::ggtitle(title) +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5,
+                                                      size = max(15, min(30, dim(layout)[1]/20)),
+                                                      face = "bold"))
+
+  if(all(is.na(label_attr))) {
+    return(p)
+  }
+
+  all_cx <- c()
+  all_cy <- c()
+  all_colors <- c()
+  for (g in unique(label_attr)) {
+    c <- layout[which(layout$labels == g), ]
+    if(dim(c)[1] == 1) {
+      all_cx <- c(all_cx, as.numeric(c[1]))
+      all_cy <- c(all_cy, as.numeric(c[2]))
+      all_colors <- c(all_colors, as.vector(c[[4]]))
+    } else {
+      v_x <- as.numeric(c[,1])
+      v_y <- as.numeric(c[,2])
+      mx <- stats::median(v_x)
+      my <- stats::median(as.numeric(c[,2]))
+      external_point <- c(mx, my)
+      points <- apply(c[,c(1, 2)], 2, as.numeric)
+      dif_x <- (points[,1] - external_point[1])^2
+      dif_y <- (points[,2] - external_point[2])^2
+      distances <- sqrt(rowSums(cbind(dif_x, dif_y)))
+      closest_point_index <- which.min(distances)
+      closest_point <- c[closest_point_index, ]
+      all_cx <- c(all_cx, as.numeric(closest_point[1]))
+      all_cy <- c(all_cy, as.numeric(closest_point[2]))
+      all_colors <- c(all_colors, as.vector(closest_point[[4]]))
+    }
+  }
+
+  if(any(is.na(all_colors))) {
+    all_colors[which(is.na(all_colors))] <- "grey90"
+  }
+
+  all_colors_hex <- scales::col_numeric(
+    palette = palette,
+    domain = range(layout$color, na.rm = TRUE)
+  )(all_colors)
+
+  p <- p + ggrepel::geom_label_repel(ggplot2::aes(x = all_cx,
+                                                  y = all_cy,
+                                                  label = unique(label_attr)),
+                                     color = all_colors_hex,
+                                     box.padding = 0.5,
+                                     max.overlaps = Inf,
+                                     show.legend = FALSE)
   return(p)
 
 }

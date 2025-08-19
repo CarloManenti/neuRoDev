@@ -26,7 +26,8 @@ Imports:
 	Polychrome,
 	scales,
 	RColorBrewer,
-	viridis
+	viridis,
+	colorspace
 Suggests:
     knitr,
     rmarkdown,
