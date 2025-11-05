@@ -86,8 +86,7 @@ mapNetwork <- function(net,
   }
 
   common_genes <- intersect(rownames(net)[SingleCellExperiment::rowData(net)$informative], rownames(new_profiles))
-  new_cor <- stats::cor(t(apply(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
-                                1, function(v) {(v-mean(v))/stats::sd(v)})),
+  new_cor <- stats::cor(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
                         new_profiles[common_genes,])
 
   out <- plotSameLayout(net,
