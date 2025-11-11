@@ -25,10 +25,10 @@ get_average_subclass_vs_stage <- function(net, genes) {
       S <- (S-mean(S))/stats::sd(S)
       return(split(S, i@colData[,"SubClass"]))
     }
-    S <- t(scale(t(S)))
+    S <- t(scale(t(as.matrix(S))))
     return(split(Matrix::colMeans(S),i@colData[,"SubClass"]))
-  }
-  )
+  })
+
   o <- lapply(o, function(j) sapply(j, stats::median))
   groupVarOrder <- sort(unique(net@colData[,"SubClass"]))
   o <- do.call(rbind, lapply(o, function(i) i[groupVarOrder]))
