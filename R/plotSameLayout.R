@@ -14,6 +14,8 @@
 #' annotation scores for the mapped points
 #' @param order_names A boolean, if TRUE the names in annotateMapping
 #' barplot are ordered. Defaults to FALSE
+#' @param plot A boolean, if TRUE the mapping plot is produce, otherwise only the
+#' mapping annotation is given. Defaults to TRUE
 #' @param ... Additional parameters for `plot_net`
 #'
 #' @return An `S4Vectors` list containing the correlation matrix between the
@@ -75,6 +77,7 @@ plotSameLayout <- function(net,
                            n_nearest = 15,
                            new_name = NULL,
                            order_names = FALSE,
+                           plot = TRUE,
                            ...) {
 
   if(is.null(col_vector)) {
@@ -84,6 +87,20 @@ plotSameLayout <- function(net,
   orig_col_attr <- color_attr
   orig_label_attr <- label_attr
   orig_col_vec <- col_vector
+
+  if(!plot) {
+    new_best_annotation <- annotateMapping(net = net,
+                                           new_cor = new_cor,
+                                           color_attr = orig_col_attr,
+                                           col_vector = orig_col_vec,
+                                           n_nearest = n_nearest,
+                                           order_names = order_names)
+
+    out <- S4Vectors::List(new_cor = new_cor,
+                                annotation = new_best_annotation)
+
+    return(out)
+  }
 
   if(is.character(label_attr) && length(label_attr) == 1 && label_attr %in% colnames(SingleCellExperiment::colData(net))) {
     label_attr <- SingleCellExperiment::colData(net)[,label_attr]
@@ -167,17 +184,32 @@ plotSameLayout <- function(net,
 
   center <- c(mean(as.numeric(layout[,1])), mean(as.numeric(layout[,2])))
 
-  neighbors_coords <- t(apply(new_cor, 2, function(i) {
-    n <- rownames(new_cor)[order(i, decreasing = TRUE)[seq(1,n_nearest)]]
-    xs <- layout[n,1]
-    ys <- layout[n,2]
-    sim <- sort(i, decreasing = TRUE)[seq(1,n_nearest)]
-    weighted_pos <- Matrix::colSums(cbind(as.numeric(xs), as.numeric(ys)) * sim/sum(sim))
-    avg_sim <- mean(sim)
-    factor <- min(1, 2 * avg_sim)
-    new_point <- (1-factor)*center + factor*weighted_pos
-    return(new_point)
+  annot <- rownames(new_cor)
+  layout_x <- as.numeric(layout[,1])
+  layout_y <- as.numeric(layout[,2])
+
+  neighbors_coords <- do.call(rbind,lapply(seq_len(ncol(new_cor)), function(j) {
+      col <- new_cor[, j]
+
+      ord <- order(col, decreasing = TRUE)
+      idx <- ord[seq_len(n_nearest)]
+
+      xs <- layout_x[idx]
+      ys <- layout_y[idx]
+
+      sim <- col[idx]
+
+      w <- sim / sum(sim)
+      weighted_x <- sum(xs * w)
+      weighted_y <- sum(ys * w)
+
+      avg_sim <- mean(sim)
+      factor <- min(1, 2 * avg_sim)
+
+      return((1 - factor) * center + factor * c(weighted_x, weighted_y))
   }))
+
+  rownames(neighbors_coords) <- colnames(new_cor)
 
   new_layout <- rbind(layout, neighbors_coords)
 
@@ -225,10 +257,10 @@ plotSameLayout <- function(net,
                       only_new_points = only_new_points, ...)
   }
 
-  out <- S4Vectors::List(list(new_cor = new_cor,
+  out <- S4Vectors::List(new_cor = new_cor,
                               new_edges = new_edges_to_use,
                               new_layout = new_layout,
-                              new_plot = p_new))
+                              new_plot = p_new)
 
   if(annotate) {
     new_best_annotation <- annotateMapping(net = net,

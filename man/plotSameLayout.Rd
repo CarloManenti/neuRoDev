@@ -19,6 +19,7 @@ plotSameLayout(
   n_nearest = 15,
   new_name = NULL,
   order_names = FALSE,
+  plot = TRUE,
   ...
 )
 }
@@ -55,6 +56,9 @@ their colnames}
 
 \item{order_names}{A boolean, if TRUE the names in annotateMapping
 barplot are ordered. Defaults to FALSE}
+
+\item{plot}{A boolean, if TRUE the mapping plot is produce, otherwise only the
+mapping annotation is given. Defaults to TRUE}
 
 \item{...}{Additional parameters for \code{plot_net}}
 }
