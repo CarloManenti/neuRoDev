@@ -5,9 +5,9 @@ Depends: R (>= 4.1.0)
 Authors@R: 
     person("Erik", "Bot", email = "erik.bot@fht.org", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-4304-6402"))
-Description: Starting from one or multiple single-cell RNA sequencing datasets, the package clusters the cells and computes signatures of each cluster. Then, by correlation with a set of reference signatures, it constructs a correlation matrix which is plotted as a UMAP. The package then allows to add new, unlabelled data to the UMAP, by repeating the same steps and plotting the newly obtained clusters on the starting UMAP, and it quantifies the characteristics of the neighbours to label the new data. On the other hand, it also allows to get further information on the starting datasets if a new labelled one is added.
 Encoding: UTF-8
 License: MIT + file LICENSE
+Description: neuRoDev package is an R package that provides analysis tools to use the integrated transcriptomic references of cortex development described in *DOI*. The functions allow the visualization and exploration of the expression of genes and genesets across cortical development in multiple cell types. Additionally, the package allows the mapping of both single-cell RNAseq and bulk RNAseq datasets, as well as tools for their interpretation.
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
