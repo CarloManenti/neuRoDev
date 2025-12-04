@@ -12,6 +12,6 @@ output_dir: "../docs"
 rmd_files:
   - index.Rmd
   - 2-Network_Exploration.Rmd
-  - 3.1-Analysis_Tools.Rmd
-  - 4.1.1-Mapping_scRNAseq.Rmd
-  - 4.1.2-Mapping_bulkRNAseq.Rmd
+  - 3-Analysis_Tools.Rmd
+  - 4.1-Mapping_bulkRNAseq.Rmd
+  - 4.2-Mapping_scRNAseq.Rmd
