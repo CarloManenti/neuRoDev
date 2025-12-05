@@ -47,7 +47,7 @@
 #' 'to.x' = edges_to_x,
 #' 'to.y' = edges_to_y)
 #' net@metadata$network$edges <- edges_df
-#' plotNetworkScore(net, 'Gene-1')
+#' plotNetworkScore(net, 'Gene-1', smooth = FALSE)
 plotNetworkScore <- function(net,
                              genes = NULL,
                              score = NULL,

@@ -14,7 +14,7 @@
 #' net$SubClass <- rep(c('A', 'B', 'C', 'D'), each = 25)
 #' subclass_palette <- c('A' = 'red', 'B' = 'blue', 'C' = 'green', 'D' = 'yellow')
 #' net$SubClass_color <- subclass_palette[net$SubClass]
-#' get_palette(net)
+#' neuRoDev:::get_palette(net)
 get_palette <- function(net, color_attr = 'SubClass') {
   if(color_attr == 'SubClass') {
     palette <- unique(net$SubClass_color)

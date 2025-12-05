@@ -87,5 +87,5 @@ edges_df <- data.frame('from' = edges_from, 'to' = edges_to, 'weight' = edges_we
 'to.x' = edges_to_x,
 'to.y' = edges_to_y)
 net@metadata$network$edges <- edges_df
-plotNetworkScore(net, 'Gene-1')
+plotNetworkScore(net, 'Gene-1', smooth = FALSE)
 }

@@ -191,25 +191,24 @@ map_eTrace <- function(net,
   if(together) {
     graphics::par(mfrow = c(2, 1))
 
-    graphics::par(mar = c(0, 5, 2, 2))
+    graphics::par(mar = c(0, 5, 2, 2), font.lab = 2)
     plot(final_xs, final_ys,
-         pch = c(rep(21, length(ys)), rep(22, length(derived_y))),
-         bg  = scales::alpha(c(upper_colors, derived_stage_color),
-                             c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
-         col = scales::alpha(c(upper_colors, rep("black", length(derived_x))),
-                             c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         pch = c(rep(19, length(ys)), rep(22, length(derived_y))),
+         bg  = c(upper_colors, derived_stage_color),
+         col = c(upper_colors, rep('black', length(derived_x))),
          main = main, ylab = ylab,
          cex = final_sizes, xaxt = "n",
-         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))))
+         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))),
+         bty='n', xlab="")
 
-    graphics::abline(h = 0, lty = 2, lwd = 2, col = col_zero_line)
-    graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2, lty = 2)
+    graphics::abline(h = 0, lty = 2, lwd = 2*1.75, col = col_zero_line)
+    graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2*1.75, lty = 2)
 
-    graphics::text(x = nat_idx + 5, y = y_idx, labels = "postnatal", pos = 4)
-    graphics::text(x = nat_idx - 5, y = y_idx, labels = "prenatal", pos = 2)
+    graphics::text(x = nat_idx + 5, y = y_idx, labels = "postnatal", pos = 4, font = 2)
+    graphics::text(x = nat_idx - 5, y = y_idx, labels = "prenatal", pos = 2, font = 2)
 
     graphics::lines(stats::smooth.spline(seq(1, ncol(net)), eTrace$z, spar = 1),
-                    col = "red", lwd = 2.5)
+                    col = "red", lwd = 2*1.75)
 
     if(jitter) {
 
@@ -241,25 +240,24 @@ map_eTrace <- function(net,
 
     graphics::text(new_x, new_y, labels = colnames(mapped_obj$new_cor), cex = 0.8, pos = pos)
 
-    graphics::par(mar = c(2.5, 5, 0.5, 2))
+    graphics::par(mar = c(2.5, 5, 0.5, 2), font.lab = 2)
     plot(final_xs, final_ys,
-         pch = c(rep(21, length(ys)), rep(22, length(derived_y))),
-         bg  = scales::alpha(c(lower_colors, derived_subclass_color),
-                             c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
-         col = scales::alpha(c(lower_colors, rep("black", length(derived_x))),
-                             c(rep(0.5, length(ys)), rep(1, length(derived_x)))),
+         pch = c(rep(19, length(ys)), rep(22, length(derived_y))),
+         bg  = c(lower_colors, derived_stage_color),
+         col = c(lower_colors, rep('black', length(derived_x))),
          main = "", ylab = ylab,
          cex = final_sizes,
-         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))))
+         lwd = c(rep(1, length(ys)), rep(2, length(derived_y))),
+         xaxt='n', bty='n', xlab="")
 
-    graphics::abline(h = 0, lty = 2, lwd = 2, col = col_zero_line)
-    graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2, lty = 2)
+    graphics::abline(h = 0, lty = 2, lwd = 2*1.75, col = col_zero_line)
+    graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2*1.75, lty = 2)
 
-    graphics::text(x = nat_idx + 5, y = y_idx, labels = "postnatal", pos = 4)
-    graphics::text(x = nat_idx - 5, y = y_idx, labels = "prenatal", pos = 2)
+    # graphics::text(x = nat_idx + 5, y = y_idx, labels = "postnatal", pos = 4, font = 2)
+    # graphics::text(x = nat_idx - 5, y = y_idx, labels = "prenatal", pos = 2, font = 2)
 
     graphics::lines(stats::smooth.spline(seq(1, ncol(net)), eTrace$z, spar = 1),
-                    col = "red", lwd = 2.5)
+                    col = "red", lwd = 2*1.75)
 
     graphics::segments(x0 = derived_x, y0 = derived_y,
                        x1 = new_x, y1 = new_y,
@@ -269,36 +267,38 @@ map_eTrace <- function(net,
   } else {
     plots <- lapply(seq(1, length(derived_x)), function(i) {
       graphics::par(mfrow=c(2,1))
-      graphics::par(mar=c(0,5,2,2))
-      plot(c(xs, derived_x[i]), c(ys, derived_y[i]), pch=c(rep(21, length(ys)), 22),
-           bg=scales::alpha(c(upper_colors, derived_stage_color), 0.5),
-           col=scales::alpha(c(upper_colors, 'black'), c(rep(0.5, length(ys)), 1)),
+      graphics::par(mar=c(0,5,2,2), font.lab = 2)
+      plot(c(xs, derived_x[i]), c(ys, derived_y[i]), pch=c(rep(19, length(ys)), 22),
+           bg  = c(upper_colors, derived_stage_color),
+           col = c(upper_colors, rep('black', length(derived_x))),
            main=main,
            ylab=ylab,
            cex = final_sizes,
            xaxt = 'n',
-           lwd = c(rep(1, length(ys)), 2))
-      graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
-      graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
-      graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
-      graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
-      graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
+           lwd = c(rep(1, length(ys)), 2),
+           bty='n', xlab="")
+
+      graphics::abline(h=0, lty=2, lwd=2*1.75, col = col_zero_line)
+      graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2*1.75, lty = 2)
+      graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4, font = 2)
+      graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2, font = 2)
+      graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2*1.75)
       graphics::text(x = derived_x[i], y = derived_y[i], labels = colnames(mapped_obj$new_cor)[i], pos = 3, cex = 0.8)
 
-      graphics::par(mar=c(2.5,5,0.5,2))
+      graphics::par(mar=c(2.5,5,0.5,2), font.lab = 2)
       plot(c(xs, derived_x[i]), c(ys, derived_y[i]),
-           pch=c(rep(21, length(ys)), 22),
-           bg=scales::alpha(c(lower_colors, derived_subclass_color), 0.5),
-           col=scales::alpha(c(lower_colors, 'black'), c(rep(0.5, length(ys)), 1)),
+           pch=c(rep(19, length(ys)), 22),
+           bg  = c(lower_colors, derived_stage_color),
+           col = c(lower_colors, rep('black', length(derived_x))),
            main='',
            ylab=ylab,
            cex = final_sizes,
            xaxt = 'n',
-           lwd = c(rep(1, length(ys)), 2))
+           lwd = c(rep(1, length(ys)), 2),
+           xaxt='n', bty='n', xlab="")
       graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
       graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
-      graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4)
-      graphics::text(x = nat_idx-5, y = y_idx, labels = 'prenatal', pos = 2)
+
       graphics::lines(stats::smooth.spline(seq(1,ncol(net)),eTrace$z, spar = 1), col='red', lwd=2.5)
       graphics::text(x = derived_x[i], y = derived_y[i], labels = colnames(mapped_obj$new_cor)[i], pos = 3, cex = 0.8)
       p <- grDevices::recordPlot()

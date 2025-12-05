@@ -42,15 +42,19 @@
 #' 'to.x' = edges_to_x,
 #' 'to.y' = edges_to_y)
 #' net@metadata$network$edges <- edges_df
-#' pref_exp_genes <- list('A' = c('Gene-1', 'Gene-2'), 'B' = c('Gene-3', 'Gene-4'), 'C' = c('Gene-5', 'Gene-6'), 'D' = c('Gene-7', 'Gene-8'))
+#' pref_exp_genes <- list('A' = c('Gene-1', 'Gene-2'),
+#' 'B' = c('Gene-3', 'Gene-4'),
+#' 'C' = c('Gene-5', 'Gene-6'),
+#' 'D' = c('Gene-7', 'Gene-8'))
 #' random_m <- matrix(sample(seq(1,10, length.out=10000), 15000*20, replace = TRUE), ncol = 20)
 #' rownames(random_m) <- paste0('Gene-', seq(1,15000))
 #' colnames(random_m) <- paste0('Sample-', seq(1,20))
 #' sce <- SingleCellExperiment::SingleCellExperiment(assays = list(logcounts = random_m))
 #' sce$replicates <- rep(c('Rep1', 'Rep2', 'Rep3', 'Rep4'), each = 5)
-#' profiles <- neuRoDev:::get_column_group_average(SingleCellExperiment::logcounts(sce), sce$replicates)
+#' profiles <- neuRoDev:::get_column_group_average(SingleCellExperiment::logcounts(sce),
+#' sce$replicates)
 #' coldata <- 'replicates'
-#' plotTrends(net, pref_exp_genes, sce, profiles, coldata)
+#' neuRoDev:::plotTrends(net, pref_exp_genes, sce, profiles, coldata)
 plotTrends <- function(net,
                        pref_exp_genes,
                        sce,
@@ -241,7 +245,7 @@ plotTrends <- function(net,
       }
 
       y_means <- Matrix::colMeans(profiles[g, , drop = FALSE])
-      single_values <- Matrix::colMeans(logcounts(sce)[g,])
+      single_values <- Matrix::colMeans(SingleCellExperiment::logcounts(sce)[g,])
 
       if(relative) {
         norm_factor <- max(y_means)
@@ -255,7 +259,7 @@ plotTrends <- function(net,
       days <- colnames(profiles)
       y_sds <- sapply(days, function(d) {
         vals <- Matrix::colMeans(SingleCellExperiment::logcounts(sce)[g, SingleCellExperiment::colData(sce)[,coldata] == d, drop = FALSE])/norm_factor
-        sd(vals)
+        stats::sd(vals)
       })
       y_sds[which(is.na(y_sds))] <- 0
 
