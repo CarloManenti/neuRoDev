@@ -200,7 +200,7 @@ map_eTrace <- function(net,
          cex = final_sizes, xaxt = "n",
          lwd = c(rep(1, length(ys)), rep(2, length(derived_y))),
          bty='n', xlab="")
-
+    graphics::axis(side = 2, lwd = 2*1.25)
     graphics::abline(h = 0, lty = 2, lwd = 2*1.75, col = col_zero_line)
     graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2*1.75, lty = 2)
 
@@ -249,7 +249,7 @@ map_eTrace <- function(net,
          cex = final_sizes,
          lwd = c(rep(1, length(ys)), rep(2, length(derived_y))),
          xaxt='n', bty='n', xlab="")
-
+    graphics::axis(side = 2, lwd = 2*1.25)
     graphics::abline(h = 0, lty = 2, lwd = 2*1.75, col = col_zero_line)
     graphics::abline(v = nat_idx, col = "darkgrey", lwd = 2*1.75, lty = 2)
 
@@ -277,7 +277,7 @@ map_eTrace <- function(net,
            xaxt = 'n',
            lwd = c(rep(1, length(ys)), 2),
            bty='n', xlab="")
-
+      graphics::axis(side = 2, lwd = 2*1.25)
       graphics::abline(h=0, lty=2, lwd=2*1.75, col = col_zero_line)
       graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2*1.75, lty = 2)
       graphics::text(x = nat_idx+5, y = y_idx, labels = 'postnatal', pos = 4, font = 2)
@@ -296,6 +296,7 @@ map_eTrace <- function(net,
            xaxt = 'n',
            lwd = c(rep(1, length(ys)), 2),
            xaxt='n', bty='n', xlab="")
+      graphics::axis(side = 2, lwd = 2*1.25)
       graphics::abline(h=0, lty=2, lwd=2, col = col_zero_line)
       graphics::abline(v=nat_idx, col = 'darkgrey', lwd = 2, lty = 2)
 
