@@ -91,4 +91,4 @@ mapping-a-single-cell-rnaseq-dataset
 data-preprocessing
 data-summary
 mapping-on-the-reference-network
-knwoledge-transfer
+knowledge-transfer

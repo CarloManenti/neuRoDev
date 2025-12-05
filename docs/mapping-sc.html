@@ -198,9 +198,9 @@ Figure 5.2: Single-cell dataset UMAP colored by stage.
 <li>Pseudobulk profiles (obtained by summing all counts in a cluster together and then normalizing using Counts Per Million (CPM)).</li>
 <li>Expression signatures (obtained by averaging the normalized counts of all cells in a cluster and then subtracting the mean expression across all cells).</li>
 </ol>
-<p>Depending on the type of question, the user can choose the most suitable summary profile. The key distinction lies in the type of information captured: <strong>signatures</strong> represent relative expression, describing how a given cluster differs from the others and thus highlighting <strong>differences</strong>. In contrast, <strong>pseudobulk profiles</strong> capture <strong>absolute</strong> expression levels and are therefore more suitable for biological interpretation without emphasizing relative changes. Signatures are not suited if used in a relatively homogeneous dataset, as they will greatly enhance subtle differences which may just depicts noise.
-For the following example we will use pseudobulk profiles, which is the more straightforward approach.</p>
-<p>Pseudobulk profiles can be computed using the <strong>get_pseudobulk</strong> function, which will save as a <code>SingleCellExperiment</code> object the pseudobulk counts in <code>counts</code> and the log-normalized counts per millions in <code>logcounts</code></p>
+<p>Depending on the type of question, the user can choose the most suitable summary profile. The key distinction lies in the type of information captured: <strong>signatures</strong> represent relative expression, describing how a given cluster differs from the others and thus highlighting <strong>differences</strong>. In contrast, <strong>pseudobulk profiles</strong> capture <strong>absolute</strong> expression levels and are therefore more suitable for biological interpretation without emphasizing relative changes. Signatures are not suited if used in a relatively homogeneous dataset, as they will greatly enhance subtle differences which may just depict noise.
+For the following example we will use the most straightforward approach by mapping pseudobulk profiles.</p>
+<p>Pseudobulk profiles can be computed using the <strong>get_pseudobulk</strong> function, which will save as a <code>SingleCellExperiment</code> object the pseudobulk counts in <code>counts</code> and the log-normalized Counts Per Million in <code>logcounts</code></p>
 <p>We now define the pseudobulks of the clusters that we obtained following the Seurat pipeline:</p>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sc_pseudo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/neuRoDev/man/get_pseudobulk.html">get_pseudobulk</a></span><span class="op">(</span>exp_matrix <span class="op">=</span> <span class="va">sc_seu</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">RNA</span><span class="op">$</span><span class="va">counts</span>,</span>
@@ -219,8 +219,8 @@ For the following example we will use pseudobulk profiles, which is the more str
 <code>new_profiles</code>= the transcriptional profiles to map (either pseudobulk or signatures).</li>
 </ul>
 <p>Other useful inputs can be checked in the function help (<strong>?mapNetwork</strong>).</p>
-<p>Since in the original paper they mention the presence of glial cell types, inhibitory and excitatory neurons, it is reasonable to map on the corticogenesis network. If your experimental design already defines the presence of only glial cells or only excitatory neurons (with their respective precursors), then it is suggested to map only on the neurogenesis and gliogenesis steps.
-Another approach is to first map on the on the more general corticogenesis network and then map again on the precise lineage-specific networks, also on a subset of cells.</p>
+<p>Since in the original paper they mention the presence of glial cell types, as well as inhibitory and excitatory neurons, it is reasonable to map on the corticogenesis network. If your experimental design already defines the presence of only glial cells or only excitatory neurons (with their respective precursors), then it is suggested to map only on the neurogenesis and gliogenesis steps.
+Another approach is to first map on the more general corticogenesis network and then map again on the precise lineage-specific networks, also on a subset of cells.</p>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapped_sc_pseudo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/neuRoDev/man/mapNetwork.html">mapNetwork</a></span><span class="op">(</span>net <span class="op">=</span> <span class="va">corticogenesis_sce</span>, </span>
 <span>                               new_profiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/assays.html">logcounts</a></span><span class="op">(</span><span class="va">sc_pseudo</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -236,7 +236,7 @@ Figure 5.3: Corticogenesis network with mapped clusters.
 <p>Newly mapped clusters will locate close to the most similar reference clusters, so it is possible to observe the most similar subclasses for each mapped cluster.
 By visualizing the mapped network, we can already appreciate how the clusters generally map into two different sections of the network, one close to radial glia and cycling radial glia, while the other close to immature neurons. To quantify similarity, we developed a score per subclass per cluster, using the 15 most similar reference clusters’ annotations (the number of reference clusters to use can be set by changing <code>n_nearest</code> in the <strong>mapNetwork</strong> function).
 This score sums up to 1 and represents the weighted fraction of clusters in the neighborhood belonging to the different subclasses.
-The score can be visualized with a barplot reporting on the y-axis the proportions (between 0-1) of the different subclasses, and on the x-axis the mapped clusters.</p>
+The score can be visualized with a barplot reporting the proportions (between 0-1) of the different subclasses across the mapped clusters.</p>
 <div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapped_sc_pseudo</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="va">Barplot</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -267,7 +267,7 @@ Figure 5.4: Annotation scores across clusters.
 </ul>
 <p>Our mapping strategy allows the mapping of any expression matrix, thus we added a quantification of the mapping confidence, described with two diverse measures:</p>
 <ol style="list-style-type: lower-alpha">
-<li><p><strong>confidence</strong> (<code>mapped_object$annotation$Mapping.Confidence</code>) for each mapped point, showing the average of the 15 highest correlation values that mapped point has with the reference clusters.</p></li>
+<li><p><strong>confidence</strong> (<code>mapped_object$annotation$Mapping.Confidence</code>) for each mapped point, showing the average of the 15 highest correlation values that the mapped point has with the reference clusters.</p></li>
 <li><p><strong>global confidence</strong> (<code>mapped_object$annotation$Global.Confidence</code>), describing the average confidence across all mapped point.</p></li>
 </ol>
 <p>The confidence values can be accessed in the following way:</p>
@@ -286,7 +286,7 @@ Figure 5.4: Annotation scores across clusters.
 <span><span class="co"># global confidence</span></span>
 <span><span class="va">mapped_sc_pseudo</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="va">Global.Confidence</span></span>
 <span><span class="co">#&gt; [1] 0.7162878</span></span></code></pre></div>
-<p>The confidence score not only tells how similar are the mapped points to neighboring clusters, but also can help identifying profiles of low quality or cell types not represented in the resource.</p>
+<p>The confidence score not only tells how similar are the mapped points to neighboring clusters, but also can help identifying profiles of low quality or cells of cell types not represented in the resource.</p>
 <p>For example, cluster 23 has a slightly lower confidence score (~0.50) compared to the others, so it may be worth further checking the quality of the cells in that cluster (<strong>not done here</strong>), to assess whether this could be a low quality group of cells.</p>
 <p>Sometimes clusters have a high confidence score, but neighbors with different annotations, making it hard to actually infer a single annotation. To help with this, it is possible to apply the confidence score to the inferred annotations defined above:</p>
 <div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
@@ -312,9 +312,9 @@ Figure 5.4: Annotation scores across clusters.
 <span><span class="co">#&gt;         RG        cRG </span></span>
 <span><span class="co">#&gt; 0.74243175 0.05408324</span></span></code></pre></div>
 </div>
-<div id="knwoledge-transfer" class="section level3" number="5.3.4">
+<div id="knowledge-transfer" class="section level3" number="5.3.4">
 <h3>
-<span class="header-section-number">5.3.4</span> Knwoledge transfer<a class="anchor" aria-label="anchor" href="#knwoledge-transfer"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.3.4</span> Knowledge transfer<a class="anchor" aria-label="anchor" href="#knowledge-transfer"><i class="fas fa-link"></i></a>
 </h3>
 <p>The annotations newly defined can now be transferred to the original dataset and visualized at the single cell level.</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
@@ -350,7 +350,7 @@ Figure 5.4: Annotation scores across clusters.
 Figure 5.5: Single-cell dataset UMAP with clusters and annotations.
 </p>
 </div>
-<p>By looking at the UMAP labelled by cluster together with the newly annotated UMAP, we can appreciate that the cells annotated as cRG close to all the cells annotated as RG are indeed those of the cluster 4, the cluster with similar annotation values for both cRG and RG.</p>
+<p>By looking at the UMAP labelled by cluster together with the newly annotated UMAP, we can appreciate that the cells annotated as cRG that are close to all the cells annotated as RG are indeed those of the cluster 4, the cluster with similar annotation values for both cRG and RG.</p>
 <p>To further validate the annotation, we can also visualize the preferentially expressed genes in the relevant subclasses. We report gene sets preferentially expressed in each reference subclass or subclass group here.</p>
 <div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corticogenesis_pe_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"~/Downloads/corticogenesis_subclass_preferential_genes.rds"</span><span class="op">)</span></span>
@@ -407,7 +407,7 @@ Figure 5.5: Single-cell dataset UMAP with clusters and annotations.
 Figure 5.6: Preferential genes expression
 </p>
 </div>
-<p>By the expression of preferentially expressed genes defined in our resource match the expectations, and that cluster 4 has high expression of cRG markers, confirming the annotations given by the mapping strategy.
+<p>The expression of preferentially expressed genes defined in our resource match the assigned labels, confirming the annotations given by the mapping strategy.
 To further characterize our clusters, we can leverage the list of our manually curated Gene Ontology Biological Processes for the corticogenesis and neurogenesis networks and assess their expression levels in the mapped clusters.
 The list of manually curated Biological Processes can be downloaded from here.</p>
 <div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
@@ -432,11 +432,10 @@ The list of manually curated Biological Processes can be downloaded from here.</
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">sc_seu_cortico_GOBP</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" \\(GO:[0-9]+\\)$"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">sc_seu_cortico_GOBP</span><span class="op">)</span><span class="op">)</span> <span class="co">#to simplify the gene sets names</span></span>
 <span></span>
 <span><span class="va">sc_seu_cortico_GOBP</span> <span class="op">&lt;-</span> <span class="va">sc_seu_cortico_GOBP</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/pkg/gtools/man/mixedsort.html">mixedorder</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">sc_seu_cortico_GOBP</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="co">#to put them in alphabetical order</span></span></code></pre></div>
-<p>Then, we can visualize the relative expression in a Heatmap to assess which biological processes characterize more our mapped clusters.</p>
+<p>Then, we can visualize the relative expression in a heatmap to assess which biological processes characterize more our mapped clusters.</p>
 <details><summary><strong>Show the code (simplifying labels)</strong>
 </summary><div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#this annotation replicates the one in Figure .. and aggregates cell types in major groups</span></span>
-<span><span class="va">cortico_subclass_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">corticogenesis_preferential_GO</span><span class="op">$</span><span class="va">GO_Biological_Process_2025</span><span class="op">$</span><span class="va">preferential</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cortico_subclass_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">corticogenesis_preferential_GO</span><span class="op">$</span><span class="va">GO_Biological_Process_2025</span><span class="op">$</span><span class="va">preferential</span><span class="op">)</span></span>
 <span><span class="va">cortico_subclass_groups</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">cortico_subclass_groups</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'L23IT'</span>, <span class="st">'L35IT'</span>, <span class="st">'L6IT'</span>, <span class="st">'L6NIT'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">'matEN'</span></span>
 <span><span class="va">cortico_subclass_groups</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">cortico_subclass_groups</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'LAMP5'</span>, <span class="st">'SST'</span>, <span class="st">'PVALB'</span>, <span class="st">'VIP'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">'matIN'</span></span>
 <span><span class="va">cortico_subclass_groups</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">cortico_subclass_groups</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'imIT'</span>, <span class="st">'imNIT'</span>, <span class="st">'eEN'</span>, <span class="st">'miEN'</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">'immEN'</span></span>
@@ -497,7 +496,7 @@ The list of manually curated Biological Processes can be downloaded from here.</
 Figure 5.7: Heatmap of corticogenesis-specific GO biological processes in resource and mapped clusters.
 </p>
 </div>
-<p>This heatmap shows that generally the biological processes match the annotations, with radial glia clusters displaying higher expression of processes associated with proliferation and glial metabolism, but we can also see that clusters 19 and 23 show high expression of stress-related processes, while displaying low expression of the terms more related to radial glia, their assigned annotation. This could explain why cluster 23 has such a low mapping confidence and suggest that these clusters are composed by early stressed cells.</p>
+<p>This heatmap shows that the biological processes match the annotations, with radial glia clusters displaying higher expression of processes associated with proliferation and glial metabolism, but we can also see that clusters 19 and 23 show high expression of stress-related processes, while displaying low expression of the terms more related to radial glia, their assigned annotation. This could explain why cluster 23 has such a low mapping confidence and suggests that these clusters are composed by possibly stressed cells.</p>
 The same type of analysis can be done with the neurogenesis network:
 <details><summary><strong>Show the code (neurogenesis GO code)</strong>
 </summary><div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
@@ -580,7 +579,8 @@ The function to perform such analysis is <strong>map_eTrace</strong>, which requ
 <li>
 <code>mapped_obj</code>= the result of <strong>mapNetwork</strong>
 </li>
-<li>the inputs required to run <strong>plot_eTrace</strong> (see the <a href="analysis.html#analysis">Chapter Analysis tools</a>)</li>
+<li>the inputs required to run <strong>plot_eTrace</strong> (see the <a href="analysis.html#analysis">Chapter Analysis tools</a>), mainly <code>genes</code> and <code>expression_enrichment</code>
+</li>
 </ul>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/neuRoDev/man/map_eTrace.html">map_eTrace</a></span><span class="op">(</span>net <span class="op">=</span> <span class="va">corticogenesis_sce</span>, </span>
@@ -597,7 +597,7 @@ The function to perform such analysis is <strong>map_eTrace</strong>, which requ
 Figure 5.9: VIM and SYT1 eTrace in corticogenesis and mapped points
 </p>
 </div>
-<p>From this type on analysis we can clearly appreciate the distinction between radial glia-like clusters and more neuronal ones. Additionally, we can see at a glance which mapped points resemble more mature reference clusters, as age increases from left to right. The more rightward clusters are: 2, 9, 11, and 14.
+<p>From this type of analysis we can clearly appreciate the distinction between radial glia-like clusters and more neuronal ones. Additionally, we can see at a glance which mapped points resemble more mature reference clusters, as age increases from left to right. The more rightward clusters are: 2, 9, 11, and 14.
 If we check the percentage of cells belonging to the latest time point (4 months) across each cluster,
 we can see that those clusters are also those with the highest proportion of latest-stage cells:</p>
 <div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
@@ -636,7 +636,7 @@ we can see that those clusters are also those with the highest proportion of lat
 Figure 5.10: eTraces of markers of selected clusters.
 </p>
 </div>
-<p>Again, it is easy to distinguish between more neuronal clusters and more radial glia-like clusters, but also we can find some clusters that are more inhibitory neurons-like (e.g. clusters 22 and 11), and cluster 23 markers which are highly expressed in microglia too, pointing to a possible transcriptional signature stress-related.</p>
+<p>Again, it is easy to distinguish between more neuronal clusters and more radial glia-like clusters, but also we can find some clusters that are more inhibitory neurons-like (e.g. clusters 22 and 11), and cluster 23 markers which are highly expressed in microglia too, again pointing to a possible stress-related transcriptional signature.</p>
 
 </div>
 </div>
@@ -660,7 +660,7 @@ Figure 5.10: eTraces of markers of selected clusters.
 <li><a class="nav-link" href="#data-preprocessing"><span class="header-section-number">5.3.1</span> Data preprocessing</a></li>
 <li><a class="nav-link" href="#data-summary"><span class="header-section-number">5.3.2</span> Data summary</a></li>
 <li><a class="nav-link" href="#mapping-on-the-reference-network"><span class="header-section-number">5.3.3</span> Mapping on the reference network</a></li>
-<li><a class="nav-link" href="#knwoledge-transfer"><span class="header-section-number">5.3.4</span> Knwoledge transfer</a></li>
+<li><a class="nav-link" href="#knowledge-transfer"><span class="header-section-number">5.3.4</span> Knowledge transfer</a></li>
 </ul>
 </li>
 </ul>

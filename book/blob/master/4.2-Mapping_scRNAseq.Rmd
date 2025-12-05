@@ -126,10 +126,10 @@ The standard mapping procedure requires the definition of summary transcriptiona
   1. Pseudobulk profiles (obtained by summing all counts in a cluster together and then normalizing using Counts Per Million (CPM)).
   2. Expression signatures (obtained by averaging the normalized counts of all cells in a cluster and then subtracting the mean expression across all cells).
   
-Depending on the type of question, the user can choose the most suitable summary profile. The key distinction lies in the type of information captured: **signatures** represent relative expression, describing how a given cluster differs from the others and thus highlighting **differences**. In contrast, **pseudobulk profiles** capture **absolute** expression levels and are therefore more suitable for biological interpretation without emphasizing relative changes. Signatures are not suited if used in a relatively homogeneous dataset, as they will greatly enhance subtle differences which may just depicts noise. 
-For the following example we will use pseudobulk profiles, which is the more straightforward approach.
+Depending on the type of question, the user can choose the most suitable summary profile. The key distinction lies in the type of information captured: **signatures** represent relative expression, describing how a given cluster differs from the others and thus highlighting **differences**. In contrast, **pseudobulk profiles** capture **absolute** expression levels and are therefore more suitable for biological interpretation without emphasizing relative changes. Signatures are not suited if used in a relatively homogeneous dataset, as they will greatly enhance subtle differences which may just depict noise. 
+For the following example we will use the most straightforward approach by mapping pseudobulk profiles.
 
-Pseudobulk profiles can be computed using the **get_pseudobulk** function, which will save as a `SingleCellExperiment` object the pseudobulk counts in `counts` and the log-normalized counts per millions in `logcounts`
+Pseudobulk profiles can be computed using the **get_pseudobulk** function, which will save as a `SingleCellExperiment` object the pseudobulk counts in `counts` and the log-normalized Counts Per Million in `logcounts`
 
 
 We now define the pseudobulks of the clusters that we obtained following the Seurat pipeline:
@@ -150,8 +150,8 @@ Now comes the actual mapping part, which can be easily performed using the **map
  
 Other useful inputs can be checked in the function help (**?mapNetwork**).
 
-Since in the original paper they mention the presence of glial cell types, inhibitory and excitatory neurons, it is reasonable to map on the corticogenesis network. If your experimental design already defines the presence of only glial cells or only excitatory neurons (with their respective precursors), then it is suggested to map only on the neurogenesis and gliogenesis steps. 
-Another approach is to first map on the on the more general corticogenesis network and then map again on the precise lineage-specific networks, also on a subset of cells.
+Since in the original paper they mention the presence of glial cell types, as well as inhibitory and excitatory neurons, it is reasonable to map on the corticogenesis network. If your experimental design already defines the presence of only glial cells or only excitatory neurons (with their respective precursors), then it is suggested to map only on the neurogenesis and gliogenesis steps. 
+Another approach is to first map on the more general corticogenesis network and then map again on the precise lineage-specific networks, also on a subset of cells.
 
 ```{r}
 mapped_sc_pseudo <- mapNetwork(net = corticogenesis_sce, 
@@ -167,7 +167,7 @@ mapped_sc_pseudo$new_plot
 Newly mapped clusters will locate close to the most similar reference clusters, so it is possible to observe the most similar subclasses for each mapped cluster.
 By visualizing the mapped network, we can already appreciate how the clusters generally map into two different sections of the network, one close to radial glia and cycling radial glia, while the other close to immature neurons. To quantify similarity, we developed a score per subclass per cluster, using the 15 most similar reference clusters' annotations (the number of reference clusters to use can be set by changing `n_nearest` in the **mapNetwork** function). 
 This score sums up to 1 and represents the weighted fraction of clusters in the neighborhood belonging to the different subclasses. 
-The score can be visualized with a barplot reporting on the y-axis the proportions (between 0-1) of the different subclasses, and on the x-axis the mapped clusters.
+The score can be visualized with a barplot reporting the proportions (between 0-1) of the different subclasses across the mapped clusters.
 
 ```{r ch4-fig4, fig.cap="Annotation scores across clusters.", fig.height=3, fig.align='center'}
 mapped_sc_pseudo$annotation$Barplot
@@ -187,7 +187,7 @@ The same quantification can be obtained for stages of maturation, either by spec
 
 Our mapping strategy allows the mapping of any expression matrix, thus we added a quantification of the mapping confidence, described with two diverse measures:
 
-  a. **confidence** (`mapped_object$annotation$Mapping.Confidence`) for each mapped point, showing the average of the 15 highest correlation values that mapped point has with the reference clusters.
+  a. **confidence** (`mapped_object$annotation$Mapping.Confidence`) for each mapped point, showing the average of the 15 highest correlation values that the mapped point has with the reference clusters.
   
   b. **global confidence** (`mapped_object$annotation$Global.Confidence`), describing the average confidence across all mapped point. 
 
@@ -201,7 +201,7 @@ mapped_sc_pseudo$annotation$Mapping.Confidence
 mapped_sc_pseudo$annotation$Global.Confidence
 ```
 
-The confidence score not only tells how similar are the mapped points to neighboring clusters, but also can help identifying profiles of low quality or cell types not represented in the resource.
+The confidence score not only tells how similar are the mapped points to neighboring clusters, but also can help identifying profiles of low quality or cells of cell types not represented in the resource.
 
 For example, cluster 23 has a slightly lower confidence score (~0.50) compared to the others, so it may be worth further checking the quality of the cells in that cluster (**not done here**), to assess whether this could be a low quality group of cells.
 
@@ -212,7 +212,7 @@ Sometimes clusters have a high confidence score, but neighbors with different an
 mapped_sc_pseudo$annotation$Annotations.Confidence[seq(1,5)]
 ```
 
-### Knwoledge transfer
+### Knowledge transfer
 
 The annotations newly defined can now be transferred to the original dataset and visualized at the single cell level.
 
@@ -245,7 +245,7 @@ DimPlot(
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-By looking at the UMAP labelled by cluster together with the newly annotated UMAP, we can appreciate that the cells annotated as cRG close to all the cells annotated as RG are indeed those of the cluster 4, the cluster with similar annotation values for both cRG and RG.
+By looking at the UMAP labelled by cluster together with the newly annotated UMAP, we can appreciate that the cells annotated as cRG that are close to all the cells annotated as RG are indeed those of the cluster 4, the cluster with similar annotation values for both cRG and RG.
 
 To further validate the annotation, we can also visualize the preferentially expressed genes in the relevant subclasses. We report gene sets preferentially expressed in each reference subclass or subclass group here.
 
@@ -306,7 +306,7 @@ DimPlot(
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-By the expression of preferentially expressed genes defined in our resource match the expectations, and that cluster 4 has high expression of cRG markers, confirming the annotations given by the mapping strategy.
+The expression of preferentially expressed genes defined in our resource match the assigned labels, confirming the annotations given by the mapping strategy.
 To further characterize our clusters, we can leverage the list of our manually curated Gene Ontology Biological Processes for the corticogenesis and neurogenesis networks and assess their expression levels in the mapped clusters.
 The list of manually curated Biological Processes can be downloaded from here.  
 
@@ -341,12 +341,11 @@ rownames(sc_seu_cortico_GOBP) <- gsub(" \\(GO:[0-9]+\\)$", "", rownames(sc_seu_c
 sc_seu_cortico_GOBP <- sc_seu_cortico_GOBP[,mixedorder(colnames(sc_seu_cortico_GOBP))] #to put them in alphabetical order
 ```
 
-Then, we can visualize the relative expression in a Heatmap to assess which biological processes characterize more our mapped clusters. 
+Then, we can visualize the relative expression in a heatmap to assess which biological processes characterize more our mapped clusters. 
 
 <details>
 <summary><strong>Show the code (simplifying labels)</strong></summary>
 ```{r}
-#this annotation replicates the one in Figure .. and aggregates cell types in major groups
 cortico_subclass_groups <- colnames(corticogenesis_preferential_GO$GO_Biological_Process_2025$preferential)
 cortico_subclass_groups[which(cortico_subclass_groups %in% c('L23IT', 'L35IT', 'L6IT', 'L6NIT'))] <- 'matEN'
 cortico_subclass_groups[which(cortico_subclass_groups %in% c('LAMP5', 'SST', 'PVALB', 'VIP'))] <- 'matIN'
@@ -454,7 +453,7 @@ draw(ht_list,
      padding = unit(c(5, 5, 2, 80), "mm"))
 ```
 
-This heatmap shows that generally the biological processes match the annotations, with radial glia clusters displaying higher expression of processes associated with proliferation and glial metabolism, but we can also see that clusters 19 and 23 show high expression of stress-related processes, while displaying low expression of the terms more related to radial glia, their assigned annotation. This could explain why cluster 23 has such a low mapping confidence and suggest that these clusters are composed by early stressed cells.
+This heatmap shows that the biological processes match the annotations, with radial glia clusters displaying higher expression of processes associated with proliferation and glial metabolism, but we can also see that clusters 19 and 23 show high expression of stress-related processes, while displaying low expression of the terms more related to radial glia, their assigned annotation. This could explain why cluster 23 has such a low mapping confidence and suggests that these clusters are composed by possibly stressed cells.
 
 The same type of analysis can be done with the neurogenesis network:
 <details>
@@ -605,7 +604,7 @@ The function to perform such analysis is **map_eTrace**, which requires the foll
 
  - `net`= the reference network to use
  - `mapped_obj`= the result of **mapNetwork**
- - the inputs required to run **plot_eTrace** (see the [Chapter Analysis tools](#analysis))
+ - the inputs required to run **plot_eTrace** (see the [Chapter Analysis tools](#analysis)), mainly `genes` and `expression_enrichment`
 
 ```{r ch4-fig9, fig.cap="VIM and SYT1 eTrace in corticogenesis and mapped points", fig.show='hold', fig.align='center', out.width='50%'}
 map_eTrace(net = corticogenesis_sce, 
@@ -618,7 +617,7 @@ map_eTrace(net = corticogenesis_sce,
          main = "SYT1")
 ```
 
-From this type on analysis we can clearly appreciate the distinction between radial glia-like clusters and more neuronal ones. Additionally, we can see at a glance which mapped points resemble more mature reference clusters, as age increases from left to right. The more rightward clusters are: 2, 9, 11, and 14. 
+From this type of analysis we can clearly appreciate the distinction between radial glia-like clusters and more neuronal ones. Additionally, we can see at a glance which mapped points resemble more mature reference clusters, as age increases from left to right. The more rightward clusters are: 2, 9, 11, and 14. 
 If we check the percentage of cells belonging to the latest time point (4 months) across each cluster, 
 we can see that those clusters are also those with the highest proportion of latest-stage cells:
 
@@ -670,4 +669,4 @@ plot_eTrace(net = corticogenesis_sce,
                     genes = genes_markers[[23]], 
                     main = paste("markers of cluster",names(markers)[[23]]))
 ```
-Again, it is easy to distinguish between more neuronal clusters and more radial glia-like clusters, but also we can find some clusters that are more inhibitory neurons-like (e.g. clusters 22 and 11), and cluster 23 markers which are highly expressed in microglia too, pointing to a possible transcriptional signature stress-related.
+Again, it is easy to distinguish between more neuronal clusters and more radial glia-like clusters, but also we can find some clusters that are more inhibitory neurons-like (e.g. clusters 22 and 11), and cluster 23 markers which are highly expressed in microglia too, again pointing to a possible stress-related transcriptional signature.
