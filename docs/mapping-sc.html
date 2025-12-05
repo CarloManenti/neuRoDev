@@ -7,7 +7,7 @@
 <title>Chapter 5 Mapping Single-cell data | neuRoDev</title>
 <meta name="author" content="Erik Bot &amp; Asia Zonca">
 <meta name="description" content="5.1 Quickstart These are the main functions to map a single-cell RNA-sequencing dataset on the corticogenesis resource. This implies that the data loaded are already cluster profiles (or...">
-<meta name="generator" content="bookdown 0.43 with bs4_book()">
+<meta name="generator" content="bookdown 0.45 with bs4_book()">
 <meta property="og:title" content="Chapter 5 Mapping Single-cell data | neuRoDev">
 <meta property="og:type" content="book">
 <meta property="og:description" content="5.1 Quickstart These are the main functions to map a single-cell RNA-sequencing dataset on the corticogenesis resource. This implies that the data loaded are already cluster profiles (or...">
@@ -19,10 +19,10 @@
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
 <script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="libs/datatables-binding-0.33/datatables.js"></script><link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="libs/datatables-binding-0.34.0/datatables.js"></script><link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script><link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
-<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+<script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script><link href="libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="libs/crosstalk-1.2.2/js/crosstalk.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
     
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   </style>
@@ -269,8 +269,8 @@ Figure 5.4: Annotation scores across clusters.
 </ul>
 <p>Our mapping strategy allows the mapping of any expression matrix, thus we added a quantification of the mapping confidence, described with two diverse measures:</p>
 <ol style="list-style-type: lower-alpha">
-<li><p><strong>local score</strong> (<code>mapped_object$annotation$Mapping.Confidence</code>) for each mapped point, showing average of the 15 highest correlation values that mapped point has with the reference clusters.</p></li>
-<li><p><strong>global score</strong> (<code>mapped_object$annotation$Global.Confidence</code>), describing the average confidence among all mapped point.</p></li>
+<li><p><strong>confidence</strong> (<code>mapped_object$annotation$Mapping.Confidence</code>) for each mapped point, showing average of the 15 highest correlation values that mapped point has with the reference clusters.</p></li>
+<li><p><strong>global confidence</strong> (<code>mapped_object$annotation$Global.Confidence</code>), describing the average confidence across all mapped point.</p></li>
 </ol>
 <p>The confidence values can be accessed in the following way:</p>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
@@ -418,8 +418,7 @@ The list of manually curated Biological Processes are available at: …</p>
 <p>The preferential expression values of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC) for the three reference networks is also provided in the resource, and is available at: …</p>
 <p>Each object is a list containing preferential expression scores in one of the three reference networks in the three ontologies (BP, MF, CC). Each element of each list contains the activity (<code>activity</code>) derived from Gene Set Variation Analysis (one value per gene set in each cluster) and the preferential expression scores (<code>preferential</code>; one value per gene set in each subclass).</p>
 <div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># select the path in which you have saved the objects!</span></span>
-<span><span class="va">corticogenesis_preferential_GO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">'~/Downloads/corticogenesis_preferential_GO.rds'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">corticogenesis_preferential_GO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">'~/Downloads/corticogenesis_preferential_GO.rds'</span><span class="op">)</span></span>
 <span><span class="va">neurogenesis_preferential_GO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">'~/Downloads/neurogenesis_preferential_GO.rds'</span><span class="op">)</span></span>
 <span><span class="va">gliogenesis_preferential_GO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">'~/Downloads/gliogenesis_preferential_GO.rds'</span><span class="op">)</span></span></code></pre></div>
 <p>First, we compute the average expression of those gene sets:</p>

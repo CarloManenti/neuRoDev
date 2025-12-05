@@ -14,7 +14,7 @@ plotNetworkScore(
   n_nearest = 15,
   na.vec = NULL,
   palette = NULL,
-  title = NULL,
+  main = NULL,
   show_edges = TRUE,
   stroke = 0.5,
   fix_alpha = TRUE,
@@ -47,7 +47,7 @@ Defaults to 15}
 expression_enrichment = TRUE, in which it defaults to \code{BlGrRd} (if not
 otherwise specified by the user).}
 
-\item{title}{The title of the plot}
+\item{main}{The title of the plot}
 
 \item{show_edges}{A boolean, if FALSE no edges are shown. Defaults to TRUE}
 

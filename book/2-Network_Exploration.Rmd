@@ -105,14 +105,6 @@ div(style = "font-size: 0.8em; max-width: 900px; margin-bottom: 1em;",
 
 First, we need to obtain the UMAP plot of the network, which is build upon the correlations to the reference signatures. To color the clusters we can provide the labels and their associated color, thus making possible to visualize any kind of label.  
 
-```{r}
-stages_palette <- neuRoDev:::get_palette(corticogenesis_sce, 'Stages')
-
-corticogenesis_palette <- neuRoDev:::get_palette(corticogenesis_sce)
-neurogenesis_palette <- neuRoDev:::get_palette(neurogenesis_sce)
-gliogenesis_palette <- neuRoDev:::get_palette(gliogenesis_sce)
-```
-
 To plot the network we can use  **plotNetwork**, which requires:
 
   - `net` = the SingleCellExperiment object.
@@ -241,7 +233,7 @@ ordered_ages <- c(unique_ages[grep('w', unique_ages)],
                   unique_ages[grep('m', unique_ages)], 
                   unique_ages[grep('yr', unique_ages)])
 
-stages.indexes <- unlist(lapply(names(stages_palette), function(i) {
+stages.indexes <- unlist(lapply(mixedsort(unique(as.vector(corticogenesis_sce$Stages))), function(i) {
   strsplit(i, "-")[[1]][1]
   }))
 ```
@@ -270,6 +262,14 @@ gliogenesis_subclass_proportion <- t(t(gliogenesis_subclass_proportion)/colSums(
 
 Taking as an example corticogenesis, here we show the dynamics of cell type development. <span style="color: #6FC391; font-weight: bold;">Radial glia and early immature neurons</span> are high in the first time points, and decrease later on, while mature neurons show the opposite trend. Notably, <span style="color: #8E1500; font-weight: bold;">deep layer neurons</span> appear first, while <span style="color: #FFD2A8; font-weight: bold;">upper layers</span> emerge later. Moreover, <span style="color: #4077CB; font-weight: bold;">glia subclasses</span> are present already at early stages  (<span style="color: #00A7D9; font-weight: bold;">OPCs</span> and <span style="color: #00C5DE; font-weight: bold;">astrocytes</span>), and that only later on are present <span style="color: #4077CB; font-weight: bold;">oligodendrocytes</span> too.
 
+```{r, echo=FALSE}
+stages_palette <- neuRoDev:::get_palette(corticogenesis_sce, 'Stages')
+
+corticogenesis_palette <- neuRoDev:::get_palette(corticogenesis_sce)
+neurogenesis_palette <- neuRoDev:::get_palette(neurogenesis_sce)
+gliogenesis_palette <- neuRoDev:::get_palette(gliogenesis_sce)
+```
+
 ```{r ch2-fig12, echo =F, fig.width=2.5, fig.height=5, fig.align="center"}
 par(mar=c(1.15,6.65,1.15,5.17))
 barplot(height = rep_len(1,length.out  = length(corticogenesis_palette)),
@@ -280,6 +280,14 @@ barplot(height = rep_len(1,length.out  = length(corticogenesis_palette)),
         las=2,
         xaxt ="n",
         cex.names = 0.9)
+```
+
+```{r, eval=FALSE}
+stages_palette <- neuRoDev:::get_palette(corticogenesis_sce, 'Stages')
+
+corticogenesis_palette <- neuRoDev:::get_palette(corticogenesis_sce)
+neurogenesis_palette <- neuRoDev:::get_palette(neurogenesis_sce)
+gliogenesis_palette <- neuRoDev:::get_palette(gliogenesis_sce)
 ```
 
 ```{r ch2-fig13, fig.cap="Corticogenesis subclasses proportions.", fig.width=15, fig.height=4}

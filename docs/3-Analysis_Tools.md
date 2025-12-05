@@ -73,26 +73,26 @@ gliogenesis_pe_genes <- readRDS("~/Downloads/gliogenesis_subclass_preferential_g
 
 ``` r
 plot_eTrace(corticogenesis_sce, 
+            genes = corticogenesis_pe_genes$Oligo, 
+            main = 'Oligodendrocyte preferentially expressed genes')
+```
+
+<div class="figure">
+<img src="3-Analysis_Tools_files/figure-html/ch3-fig3-1.png" alt="Gene set eTrace in corticogenesis." width="90%" />
+<p class="caption">(\#fig:ch3-fig3)Gene set eTrace in corticogenesis.</p>
+</div>
+
+
+``` r
+plot_eTrace(corticogenesis_sce, 
             genes = corticogenesis_pe_genes$Opc, 
             expression_enrichment = TRUE, 
             main = 'OPC preferentially expressed genes')
 ```
 
 <div class="figure">
-<img src="3-Analysis_Tools_files/figure-html/ch3-fig3-1.png" alt="Genes set expression enrichment eTrace in corticogenesis." width="90%" />
-<p class="caption">(\#fig:ch3-fig3)Genes set expression enrichment eTrace in corticogenesis.</p>
-</div>
-
-
-``` r
-plot_eTrace(corticogenesis_sce, 
-            genes = corticogenesis_pe_genes$Oligo, 
-            main = 'Oligodendrocyte preferentially expressed genes')
-```
-
-<div class="figure">
-<img src="3-Analysis_Tools_files/figure-html/ch3-fig4-1.png" alt="Gene set eTrace in corticogenesis." width="90%" />
-<p class="caption">(\#fig:ch3-fig4)Gene set eTrace in corticogenesis.</p>
+<img src="3-Analysis_Tools_files/figure-html/ch3-fig4-1.png" alt="Genes set expression enrichment eTrace in corticogenesis." width="90%" />
+<p class="caption">(\#fig:ch3-fig4)Genes set expression enrichment eTrace in corticogenesis.</p>
 </div>
 
 Additionally, any kind of score can be visualized with eTrace. For simplicity, we have already computed preferential expression of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC), which can be downloaded here. 
@@ -233,8 +233,6 @@ As described in [Chapter Network exploration](#network), we can visualize cluste
 plotNetworkScore(net = corticogenesis_sce, 
                  genes = corticogenesis_pe_genes$Oligo, 
                  expression_enrichment = TRUE,
-                 palette = 'BlGrRd', 
-                 fix_alpha = TRUE, 
                  title = "Enrichment: Oli preferential genes")
 ```
 
@@ -255,7 +253,8 @@ top_genes_cortico <- unique(rownames(corticogenesis_sce)[apply(assays(corticogen
 
 h_cortico <- Heatmap(t(assays(corticogenesis_sce@metadata$subclass_psb)[['preferential']][top_genes_cortico, levels(corticogenesis_sce$SubClass)]), 
   name = 'preferential\nexpression', 
-  cluster_rows = F, 
+  cluster_columns = T,
+  cluster_rows = F,
   height = grid::unit(ncol(assays(corticogenesis_sce@metadata$subclass_psb)[['preferential']])*4, 'mm'), 
   width = grid::unit(length(top_genes_cortico)*4, 'mm'),
   rect_gp = gpar(color = 'black', lwd = 0.5))
@@ -270,7 +269,8 @@ top_genes_neuro <- unique(rownames(neurogenesis_sce)[apply(assays(neurogenesis_s
 
 h_neuro <- Heatmap(t(assays(neurogenesis_sce@metadata$subclass_psb)[['preferential']][top_genes_neuro, levels(neurogenesis_sce$SubClass)]), 
   name = 'preferential expression', 
-  cluster_columns = F, 
+  cluster_columns = T,
+  cluster_rows = F,
   height = grid::unit(ncol(assays(neurogenesis_sce@metadata$subclass_psb)[['preferential']])*4, 'mm'), 
   width = grid::unit(length(top_genes_neuro)*4, 'mm'), 
   rect_gp = gpar(color = 'black', lwd = 0.5))
@@ -285,7 +285,8 @@ top_genes_glio <- unique(rownames(gliogenesis_sce)[apply(assays(gliogenesis_sce@
 
 h_glio <- Heatmap(t(assays(gliogenesis_sce@metadata$subclass_psb)[['preferential']][top_genes_glio, levels(gliogenesis_sce$SubClass)]), 
   name = 'preferential expression', 
-  cluster_columns = F, 
+  cluster_columns = T,
+  cluster_rows = F,
   height = grid::unit(ncol(assays(gliogenesis_sce@metadata$subclass_psb)[['preferential']])*4, 'mm'),
   width = grid::unit(length(top_genes_glio)*4, 'mm'), 
   rect_gp = gpar(color = 'black', lwd = 0.5))

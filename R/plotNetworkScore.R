@@ -15,7 +15,7 @@
 #' @param palette The color palette to use. Defaults to `blues9`, unless
 #' expression_enrichment = TRUE, in which it defaults to `BlGrRd` (if not
 #' otherwise specified by the user).
-#' @param title The title of the plot
+#' @param main The title of the plot
 #' @param show_edges A boolean, if FALSE no edges are shown. Defaults to TRUE
 #' @param stroke The stroke of the points, defaults to 0.5
 #' @param fix_alpha A boolean, if TRUE (default) all points will have alpha 1,
@@ -57,7 +57,7 @@ plotNetworkScore <- function(net,
                              n_nearest = 15,
                              na.vec = NULL,
                              palette = NULL,
-                             title=NULL,
+                             main=NULL,
                              show_edges = TRUE,
                              stroke = 0.5,
                              fix_alpha = TRUE,
@@ -161,9 +161,9 @@ plotNetworkScore <- function(net,
     alpha <- NULL
   }
 
-  if(is.null(title)) {
+  if(is.null(main)) {
     if(length(genes) != nrow(net)) {
-      title <- paste(genes[seq(1,min(length(genes), 5))], collapse = "-")
+      main <- paste(genes[seq(1,min(length(genes), 5))], collapse = "-")
     }
   }
 
@@ -241,7 +241,7 @@ plotNetworkScore <- function(net,
 
   p <- p + ggplot2::scale_alpha_identity() + custom_theme +
     ggplot2::labs(fill = "cat") +
-    ggplot2::ggtitle(title) +
+    ggplot2::ggtitle(main) +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5,
                                                       size = max(15, min(30, dim(layout)[1]/20)),
                                                       face = "bold"))
