@@ -8,16 +8,16 @@ plotNetworkScore(
   net,
   genes = NULL,
   score = NULL,
+  expression_enrichment = FALSE,
   label_attr = NULL,
-  smooth = FALSE,
+  smooth = TRUE,
   n_nearest = 15,
-  normalize = TRUE,
   na.vec = NULL,
-  palette = "blues9",
+  palette = NULL,
   title = NULL,
   show_edges = TRUE,
   stroke = 0.5,
-  fix_alpha = FALSE,
+  fix_alpha = TRUE,
   max_size = 3
 )
 }
@@ -25,10 +25,13 @@ plotNetworkScore(
 \item{net}{The reference network}
 
 \item{genes}{The genes to consider for the score. If multiple genes are given,
-the score will be their average.}
+the score will be their average}
 
 \item{score}{The score to plot. If NULL (default), the logcounts of the
 pseudobulks are used}
+
+\item{expression_enrichment}{A boolean, if TRUE and score is NULL, the
+expression enrichment of the given genes is computed. Defaults to FALSE.}
 
 \item{label_attr}{The label attribute in \code{net}, defaults to \code{SubClass}}
 
@@ -38,12 +41,11 @@ the network structure}
 \item{n_nearest}{The number of nearest neighbors to consider for smoothing.
 Defaults to 15}
 
-\item{normalize}{A boolean, if TRUE (default) and score is NULL, it normalizes
-the pseudobulk expression computing a row-wise z-score}
-
 \item{na.vec}{The vector to define if certain clusters are not to be shown}
 
-\item{palette}{The color palette to use. Defaults to \code{blues9}}
+\item{palette}{The color palette to use. Defaults to \code{blues9}, unless
+expression_enrichment = TRUE, in which it defaults to \code{BlGrRd} (if not
+otherwise specified by the user).}
 
 \item{title}{The title of the plot}
 
@@ -51,8 +53,8 @@ the pseudobulk expression computing a row-wise z-score}
 
 \item{stroke}{The stroke of the points, defaults to 0.5}
 
-\item{fix_alpha}{A boolean, if TRUE all points will have alpha 1, otherwise
-it will be proportional to the score. Defaults to FALSE}
+\item{fix_alpha}{A boolean, if TRUE (default) all points will have alpha 1,
+otherwise it will be proportional to the score}
 
 \item{max_size}{The maximum size of the dots in the network visualization}
 }

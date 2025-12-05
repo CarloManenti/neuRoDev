@@ -22,8 +22,6 @@ neurogenesis_sce <- neurogenesis.sce(directory = '~/Downloads')
 gliogenesis_sce <- gliogenesis.sce(directory = '~/Downloads')
 ```
 
-
-
 ## eTraces
 
 We developed an intuitive way to directly visualize a molecular phenotype score in each cluster of our reference networks, which we called **eTrace** (expression Trace). We provide here an interactive tool to directly assess the (log-normalized) expression of input genes and gene sets, but to get the expression enrichment trends (more statistically robust) you are required to install the package and follow the code mentioned in this chapter.
@@ -227,15 +225,13 @@ It is possible to obtain the `eMatrix` itself by using the function **get_eMatri
 
 ## Visualization of enrichment in the network
 
-As described in [Chapter Network exploration](#network), we can visualize cluster-wise scores directly in the UMAP at the network level. This can be done with the **plotNetworkScore** function, after running **get_eTrace**.
+As described in [Chapter Network exploration](#network), we can visualize cluster-wise scores directly in the UMAP at the network level. This can be done with the **plotNetworkScore** function, setting `expression_enrichment` to TRUE.
 
 
 ``` r
-exp_enrichment_oligo <- get_eTrace(net = corticogenesis_sce, 
-                                   genes = corticogenesis_pe_genes$Oligo) #get scores
-
 plotNetworkScore(net = corticogenesis_sce, 
-                 score = exp_enrichment_oligo$z, 
+                 genes = corticogenesis_pe_genes$Oligo, 
+                 expression_enrichment = TRUE,
                  palette = 'BlGrRd', 
                  fix_alpha = TRUE, 
                  title = "Enrichment: Oli preferential genes")
@@ -247,7 +243,7 @@ plotNetworkScore(net = corticogenesis_sce,
 </div>
 
 ## Preferential expression
-We can inspect the preferential expression scores of gene genes among the networks. 
+We can inspect the preferential expression scores of preferentially expressed genes in the networks. 
 
 <details>
 <summary><strong>Show the code (plotting heatmaps)</strong></summary>

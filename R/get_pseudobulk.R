@@ -17,7 +17,7 @@ get_pseudobulk <- function(exp_matrix,
 
   unique_mv <- sort(names(which(table(membership_vector)>1)))
 
-  pseudo_counts <- t(rowsum(t(exp_matrix), membership_vector))
+  pseudo_counts <- t(rowsum(Matrix::t(exp_matrix), membership_vector))
 
   rownames(pseudo_counts) <- rownames(exp_matrix)
 

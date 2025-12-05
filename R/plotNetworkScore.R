@@ -2,22 +2,24 @@
 #'
 #' @inheritParams plotNetwork
 #' @param genes The genes to consider for the score. If multiple genes are given,
-#' the score will be their average.
+#' the score will be their average
 #' @param score The score to plot. If NULL (default), the logcounts of the
 #' pseudobulks are used
+#' @param expression_enrichment A boolean, if TRUE and score is NULL, the
+#' expression enrichment of the given genes is computed. Defaults to FALSE.
 #' @param smooth A boolean, if TRUE (default), the scores are smoothed to consider
 #' the network structure
 #' @param n_nearest The number of nearest neighbors to consider for smoothing.
 #' Defaults to 15
-#' @param normalize A boolean, if TRUE (default) and score is NULL, it normalizes
-#' the pseudobulk expression computing a row-wise z-score
 #' @param na.vec The vector to define if certain clusters are not to be shown
-#' @param palette The color palette to use. Defaults to `blues9`
+#' @param palette The color palette to use. Defaults to `blues9`, unless
+#' expression_enrichment = TRUE, in which it defaults to `BlGrRd` (if not
+#' otherwise specified by the user).
 #' @param title The title of the plot
 #' @param show_edges A boolean, if FALSE no edges are shown. Defaults to TRUE
 #' @param stroke The stroke of the points, defaults to 0.5
-#' @param fix_alpha A boolean, if TRUE all points will have alpha 1, otherwise
-#' it will be proportional to the score. Defaults to FALSE
+#' @param fix_alpha A boolean, if TRUE (default) all points will have alpha 1,
+#' otherwise it will be proportional to the score
 #'
 #' @return A ggplot of the network colored based on the score
 #' @export
@@ -49,17 +51,25 @@
 plotNetworkScore <- function(net,
                              genes = NULL,
                              score = NULL,
+                             expression_enrichment = FALSE,
                              label_attr = NULL,
-                             smooth = FALSE,
+                             smooth = TRUE,
                              n_nearest = 15,
-                             normalize = TRUE,
                              na.vec = NULL,
-                             palette = 'blues9',
+                             palette = NULL,
                              title=NULL,
                              show_edges = TRUE,
                              stroke = 0.5,
-                             fix_alpha = FALSE,
+                             fix_alpha = TRUE,
                              max_size = 3) {
+
+  if(is.null(palette)) {
+    if(expression_enrichment) {
+      palette <- 'BlGrRd'
+    } else {
+      palette <- 'blues9'
+    }
+  }
 
   if (palette %in% c("greys", "inferno", "magma", "viridis", "BlGrRd", "RdYlBu", "Spectral", "blues9")) {
     palette <- switch(palette,
@@ -95,11 +105,12 @@ plotNetworkScore <- function(net,
   }
 
   if(is.null(score)) {
-    exp_mat <- SingleCellExperiment::logcounts(net)
-    if(normalize) {
-      exp_mat <- t(apply(exp_mat, 1, function(v) {(v-mean(v))/stats::sd(v)}))
+    if(expression_enrichment) {
+      score <- get_eTrace(net = net, genes = genes)$z
+    } else {
+      exp_mat <- SingleCellExperiment::logcounts(net)
+      score <- exp_mat[genes,]
     }
-    score <- exp_mat[genes,]
   } else {
     if(is.matrix(score)) {
       if(!all(genes %in% rownames(score))) {
@@ -108,9 +119,6 @@ plotNetworkScore <- function(net,
         if(length(genes) == 0) {
           return('No gene in `score`')
         }
-      }
-      if(normalize) {
-        score <- t(apply(score, 1, function(v) {(v-mean(v))/stats::sd(v)}))
       }
       score <- score[genes,]
     }
