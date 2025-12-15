@@ -18,7 +18,7 @@ neuRoDev contains functions to perform:
 In the [Tutorial], we provide an extensive description and the code to perform
 all the mentioned analyses.
 
-We also provide an interactive [Shiny app] to visualize eTraces.
+We also provide an interactive Shiny app to visualize eTraces on the [corticogenesis], [neurogenesis], and [gliogenesis] networks.
 
 # Basic installation
 
@@ -50,7 +50,9 @@ If you use `neuRoDev` in your work, please cite
 [Analysis tools]: https://github.com/davilavelderrainlab/neuRoDev
 [Mapping scRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
 [Mapping bulkRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
-[Shiny app]: https://github.com/davilavelderrainlab/neuRoDev
+[corticogenesis]: https://erikbot.shinyapps.io/etraceshinycortico/
+[neuroogenesis]: https://erikbot.shinyapps.io/etraceshinyneuro/
+[gliogenesis]: https://erikbot.shinyapps.io/etraceshinyglio/
 [Tutorial]: https://github.com/davilavelderrainlab/neuRoDev
 [article]: https://github.com/davilavelderrainlab/neuRoDev
 [issues]: https://github.com/davilavelderrainlab/neuRoDev/issues
