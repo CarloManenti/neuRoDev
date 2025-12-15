@@ -36,7 +36,7 @@ Please use the [issues] to submit bug reports.
 
 If you use `neuRoDev` in your work, please cite
 
-> **Developmental single-cell transcriptomic networks dissect neuronal and glial genesis and maturation in the human cortex**
+> **NeuRoDev resolves lifelong temporal and cellular variation in human cortical gene expression**
 >
 > Asia Zonca&, Erik Bot& & José Davila-Velderrain
 >
