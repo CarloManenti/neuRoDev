@@ -51,7 +51,7 @@ If you use `neuRoDev` in your work, please cite
 [Mapping scRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
 [Mapping bulkRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
 [corticogenesis]: https://erikbot.shinyapps.io/etraceshinycortico/
-[neuroogenesis]: https://erikbot.shinyapps.io/etraceshinyneuro/
+[neurogenesis]: https://erikbot.shinyapps.io/etraceshinyneuro/
 [gliogenesis]: https://erikbot.shinyapps.io/etraceshinyglio/
 [Tutorial]: https://github.com/davilavelderrainlab/neuRoDev
 [article]: https://github.com/davilavelderrainlab/neuRoDev
