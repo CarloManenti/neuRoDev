@@ -7,7 +7,7 @@ This repository contains the neuRoDev R package
 
 Accompanying data resources can be found [here]
 
-Follow installation functions in the package to automatically download and use all data sources (see Network exploration).
+Follow installation functions in the package to automatically download and use all data sources (see [Tutorial]).
 
 # Overview
 
