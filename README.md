@@ -45,9 +45,9 @@ If you use `neuRoDev` in your work, please cite
 
 [Zonca, Bot, and Davila-Velderrain, 2025]: https://github.com/davilavelderrainlab/neuRoDev
 [here]: https://doi.org/10.6084/m9.figshare.30885428
-[Network exploration]: https://github.com/davilavelderrainlab/neuRoDev
-[Analysis tools]: https://github.com/davilavelderrainlab/neuRoDev
-[Mapping scRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
-[Mapping bulkRNAseq]: https://github.com/davilavelderrainlab/neuRoDev
-[Tutorial]: https://github.com/davilavelderrainlab/neuRoDev
+[Network exploration]: https://davilavelderrainlab.github.io/neuRoDev/network.html
+[Analysis tools]: https://davilavelderrainlab.github.io/neuRoDev/analysis.html
+[Mapping scRNAseq]: https://davilavelderrainlab.github.io/neuRoDev/mapping-sc.html
+[Mapping bulkRNAseq]: https://davilavelderrainlab.github.io/neuRoDev/mapping-bulk.html
+[Tutorial]: https:///davilavelderrainlab.github.io/neuRoDev
 [issues]: https://github.com/davilavelderrainlab/neuRoDev/issues
