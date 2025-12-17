@@ -43,7 +43,7 @@ gliogenesis_sce <- gliogenesis.sce(directory = '~/Downloads')
 
 ## Mapping a bulk cell RNAseq dataset
 
-This example dataset from [Gordon et al. (2021)](https://www.nature.com/articles/s41593-021-00802-y) can be download here. For the scope of the analyses, we pre-processed the data, removing batch-effect using the package `sva`, and then computed Counts Per Million (CPM) (log-normalized, saved in `logcounts`). Pre-processing steps can be done differently and depending on your own dataset characteristics, but the following steps shown in this tutorial will apply to any bulk RNAseq samples. A lack of correct pre-processing steps may affect the results and interpretation of the following analyses.
+This example dataset from [Gordon et al. (2021)](https://www.nature.com/articles/s41593-021-00802-y) can be download [here](https://doi.org/10.6084/m9.figshare.30885428) (*ExtraData_Tutorial* folder). For the scope of the analyses, we pre-processed the data, removing batch-effect using the package `sva`, and then computed Counts Per Million (CPM) (log-normalized, saved in `logcounts`). Pre-processing steps can be done differently and depending on your own dataset characteristics, but the following steps shown in this tutorial will apply to any bulk RNAseq samples. A lack of correct pre-processing steps may affect the results and interpretation of the following analyses.
 
 ```{r, message=FALSE, eval=TRUE}
 bulk_sce <- readRDS('~/Downloads/bulk_sce.rds')
@@ -96,7 +96,7 @@ mapped_bulk$annotation$Best.Annotation
 The same quantification can be done for stages, either by specifying `color_attr = 'Stages'` in the **mapNetwork** function, or by running the **annotateMapping** function, which requires the following inputs:
 
  - `net`= the reference network to use.
- - `new_cor`= the correlation between mapped points and reference clusters, which can be found by `mapped_object$new_cor`.
+ - `new_cor`= the correlation between mapped points and reference clusters, which can be found in `mapped_object$new_cor`.
  - `color_attr`= the annotation label to use, in this case 'Stages'.
  
 Our mapping strategy allows the mapping of any expression matrix, thus we added a quantification of the mapping confidence, described with two diverse measures:
@@ -125,7 +125,7 @@ The function to perform such analysis is **map_eTrace**, which requires the foll
  - the inputs required to run **plot_eTrace** (see the [Chapter Analysis tools](#analysis)), mainly `genes` and `expression_enrichment`.
  
 We can visualize the expression of preferentially expressed genes in the relevant subclasses and see how the mapped samples relate to the reference clusters. 
-We curated a list of gene sets preferentially expressed in each reference subclass or subclass group, available here.
+We curated a list of gene sets preferentially expressed in each reference subclass or subclass group, available [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder).
 
 ```{r, echo=T}
 corticogenesis_pe_genes <- readRDS("~/Downloads/corticogenesis_subclass_preferential_genes.rds")
@@ -184,7 +184,7 @@ neuRoDev:::plotTrends(net = corticogenesis_sce,
 
 Astrocyte markers increase up to day 400, but then decrease again and are overcome by cycling radial glia markers at the last time points (d500, d600).
 
-This is consistent with the expression levels of GO processes manually curated in our resource. These can be downloaded here and represent curated pathways relevant in corticogenesis and neurogenesis.
+This is consistent with the expression levels of GO processes manually curated in our resource. These can be downloaded [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder) and represent curated pathways relevant in corticogenesis and neurogenesis.
 
 ```{r}
 corticogenesis_GO <- readRDS('~/Downloads/corticogenesis_GOBP_genesets.rds')
@@ -206,8 +206,8 @@ rownames(bulk_cortico_GOBP) <- gsub(" \\(GO:[0-9]+\\)$", "", rownames(bulk_corti
 bulk_cortico_GOBP <- bulk_cortico_GOBP[,mixedorder(colnames(bulk_cortico_GOBP))]
 ```
 
-Then, we can visualize the relative expression in an heatmap.
-To compare this expression with the preferential expression of the gene sets in our resource, it is possible to download the preferential expression of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC) here. Each object is a list containing preferential expression scores in one of the three reference networks in the three ontologies (BP, MF, CC). Each element of each list contains the activity (`activity`) derived from Gene Set Variation Analysis (one value per gene set in each cluster) and the preferential expression scores (`preferential`; one value per gene set in each subclass).
+Then, we can visualize the relative expression in a heatmap.
+To compare this expression with the preferential expression of the gene sets in our resource, it is possible to download the preferential expression of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC) [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder). Each object is a list containing preferential expression scores in one of the three reference networks in the three ontologies (BP, MF, CC). Each element of each list contains the activity (`activity`) derived from Gene Set Variation Analysis (one value per gene set in each cluster) and the preferential expression scores (`preferential`; one value per gene set in each subclass).
 
 ```{r}
 corticogenesis_preferential_GO <- readRDS('~/Downloads/corticogenesis_preferential_GO.rds')

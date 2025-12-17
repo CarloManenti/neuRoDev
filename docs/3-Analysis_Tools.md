@@ -59,7 +59,7 @@ plot_eTrace(corticogenesis_sce,
 <p class="caption">(\#fig:ch3-fig2)Single gene expression enrichment eTrace in corticogenesis.</p>
 </div>
 
-It is possible to inspect not only single genes but also gene sets. For example, we can visualize the expression of curated preferentially expressed genes in the reference subclasses. The objects are available for download here. 
+It is possible to inspect not only single genes but also gene sets. For example, we can visualize the expression of curated preferentially expressed genes in the reference subclasses. The objects are available for download [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder).
 
 
 ``` r
@@ -95,7 +95,7 @@ plot_eTrace(corticogenesis_sce,
 
 Any kind of score can be visualized with the eTrace. As a further example, we can visualize the preferential expression of Gene Ontology genesets. 
 
-We have already computed preferential expression of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC), which can be downloaded here. 
+We have already computed preferential expression of Gene Ontology Biological Processes (BP), Molecular Functions (MF), and Cellular Components (CC), which can be downloaded [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder). 
 Each object is a list containing preferential expression scores in one of the three reference networks in the three ontologies (BP, MF, CC). Each element of each list contains the activity (`activity`) derived from Gene Set Variation Analysis (one value per gene set in each cluster) and the preferential expression scores (`preferential`; one value per gene set in each subclass).
 
 
@@ -394,4 +394,4 @@ draw(h_glio, heatmap_legend_side = 'left')
 <img src="3-Analysis_Tools_files/figure-html/ch3-fig18-1.png" alt="Top gene ontology biological processes in gliogenesis." width="90%" />
 <p class="caption">(\#fig:ch3-fig18)Top gene ontology biological processes in gliogenesis.</p>
 </div>
-To focus on corticogenesis-relevant processes we have also manually curated a list of Gene Ontology Biological Processes for the corticogenesis and neurogenesis networks, available for download here.
+To focus on corticogenesis-relevant processes we have also manually curated a list of Gene Ontology Biological Processes for the corticogenesis and neurogenesis networks, available for download [here](https://doi.org/10.6084/m9.figshare.30885428) (*PreferentialExpression* folder).
