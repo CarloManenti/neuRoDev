@@ -41,9 +41,9 @@ If you use `neuRoDev` in your work, please cite
 >
 > Asia Zonca, Erik Bot & José Davila-Velderrain
 >
-> _Journal_ Date. doi: [doi](https://github.com/davilavelderrainlab/neuRoDev).
+> _bioRxiv_ Date. doi: [doi]([https://github.com/davilavelderrainlab/neuRoDev](https://www.biorxiv.org/content/10.64898/2025.12.16.694589v1).
 
-[Zonca, Bot, and Davila-Velderrain, 2025]: https://github.com/davilavelderrainlab/neuRoDev
+[Zonca, Bot, and Davila-Velderrain, 2025]: https://www.biorxiv.org/content/10.64898/2025.12.16.694589v1
 [here]: https://doi.org/10.6084/m9.figshare.30885428
 [Network exploration]: https://davilavelderrainlab.github.io/neuRoDev/network.html
 [Analysis tools]: https://davilavelderrainlab.github.io/neuRoDev/analysis.html
