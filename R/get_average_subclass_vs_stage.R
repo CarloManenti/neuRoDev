@@ -1,4 +1,4 @@
-#' Get average expression divided into subclass and signatures
+#' Get average expression divided into subclass and stages
 #'
 #' @param net The reference network
 #' @param genes Genes of which to compute the average expression
