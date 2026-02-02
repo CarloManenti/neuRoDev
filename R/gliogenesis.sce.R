@@ -26,18 +26,20 @@
 #' data compendium.
 #' @export
 gliogenesis.sce <- function(directory=NULL) {
-  figshare_url <- "https://figshare.com/ndownloader/files/60381029"  # replace
+  figshare_url <- "https://api.figshare.com/v2/file/download/60381029"  # replace
 
   if(is.null(directory)) {
     directory <- tools::R_user_dir("neuRoDev", "cache")
     if (!dir.exists(directory)) dir.create(directory, recursive = TRUE)
   }
 
+  directory <- gsub('//', '/', directory, fixed = TRUE)
+
   destfile <- file.path(directory, "gliogenesis.sce.rda")
 
   if (!file.exists(destfile)) {
     message("Downloading the gliogenesis.sce object (~87MB) to:\n", destfile)
-    utils::download.file(figshare_url, destfile, mode = "wb")
+    curl::curl_download(figshare_url, destfile, quiet = FALSE)
   }
 
   obj_name <- load(destfile)
