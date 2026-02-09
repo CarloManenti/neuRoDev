@@ -51,6 +51,8 @@
 #' new_cor <- stats::cor(t(apply(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
 #' 1, function(v) {(v-mean(v))/stats::sd(v)})),new_profiles[common_genes,])
 #' annotation <- annotateMapping(net, new_cor)
+#' 
+
 annotateMapping <- function(net,
                             new_cor,
                             color_attr = 'SubClass',
@@ -131,6 +133,17 @@ annotateMapping <- function(net,
   }
 
   df <- reshape2::melt(m)
+  
+  # Fix for single sample info
+  # for time point info
+  if(is.null(df$Var1)){
+    df$Var1  <- colnames(new_cor)
+  }
+  #stacked barplot for cell type identity/state
+  if(is.null(df$Var2)){
+      df$Var2  <- rownames(df)
+  }
+  
   df$Var1 <- as.character(df$Var1)
   if(order_names) {
     df$Var1 <- factor(df$Var1, levels = gtools::mixedsort(unique(df$Var1)))
@@ -169,3 +182,4 @@ annotateMapping <- function(net,
                                Annotations.Perc = annotation_tables,
                                Barplot = plot))
 }
+

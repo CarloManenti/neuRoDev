@@ -64,6 +64,8 @@
 #' new_cor <- stats::cor(t(apply(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
 #' 1, function(v) {(v-mean(v))/stats::sd(v)})),new_profiles[common_genes,])
 #' neuRoDev:::plotSameLayout(net, new_cor)
+#' 
+
 plotSameLayout <- function(net,
                            new_cor,
                            color_attr = 'SubClass',
@@ -137,12 +139,8 @@ plotSameLayout <- function(net,
 
   if(length(color_attr) == ncol(net)) {
     old_color_attr <- color_attr
-    if(length(new_name) == 1) {
-      color_attr <- c(color_attr, rep(new_name, nrow(new_cor)))
+    color_attr <- c(color_attr, new_name)
     } else {
-      color_attr <- c(color_attr, new_name)
-    }
-  } else {
     old_color_attr <- color_attr[which(!color_attr %in% new_name)]
   }
 
