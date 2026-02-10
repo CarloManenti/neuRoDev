@@ -67,22 +67,22 @@
 #' 
 
 plotSameLayout <- function(net,
-                           new_cor,
-                           color_attr = 'SubClass',
-                           label_attr = 'SubClass',
-                           col_vector = NULL,
-                           no_label = FALSE,
-                           new_points_col = "#FF0000",
-                           max_size = 3,
-                           only_new_points = FALSE,
-                           annotate = TRUE,
-                           n_nearest = 15,
-                           new_name = NULL,
-                           order_names = FALSE,
-                           plot = TRUE,
-                           ...) {
+   new_cor,
+   color_attr = 'SubClass',
+   label_attr = 'SubClass',
+   col_vector = NULL,
+   no_label = FALSE,
+   new_points_col = "#FF0000",
+   max_size = 3,
+   only_new_points = FALSE,
+   annotate = TRUE,
+   n_nearest = 15,
+   new_name = NULL,
+   order_names = FALSE,
+   plot = TRUE,
+    ...) {
 
-  if(is.null(col_vector)) {
+  if(is.null(col_vector)) { # FALSE
     col_vector <- paste0(color_attr, '_color')
   }
 
@@ -90,7 +90,7 @@ plotSameLayout <- function(net,
   orig_label_attr <- label_attr
   orig_col_vec <- col_vector
 
-  if(!plot | ncol(new_cor) > 1000) {
+  if(!plot | ncol(new_cor) > 1000) { # FALSE
     new_best_annotation <- annotateMapping(net = net,
                                            new_cor = new_cor,
                                            color_attr = orig_col_attr,
@@ -137,21 +137,19 @@ plotSameLayout <- function(net,
     names(new_points_col) <- c(new_clusters, new_name)
   }
 
-  if(length(color_attr) == ncol(net)) {
+  # simplified the checks! 
+  if(length(color_attr) == ncol(net)) { 
     old_color_attr <- color_attr
-    color_attr <- c(color_attr, new_name)
+    color_attr <- c(color_attr, new_name) 
     } else {
     old_color_attr <- color_attr[which(!color_attr %in% new_name)]
   }
 
+  # simplified the checks! 
   if(!is.null(label_attr)) {
     if(length(label_attr) == ncol(net)) {
-      old_label_attr <- label_attr
-      if(length(new_name) == 1) {
-        label_attr <- c(label_attr, rep(new_name, dim(new_cor)[1]))
-      } else {
+        old_label_attr <- label_attr 
         label_attr <- c(label_attr, new_name)
-      }
     } else {
       old_label_attr <- label_attr[which(!label_attr %in% new_name)]
     }
@@ -169,10 +167,11 @@ plotSameLayout <- function(net,
   edges <- net@metadata$network$edges
   network <- net@metadata$network$adj_matrix
 
+
   if(length(unique(col_vector)) == length(unique(old_color_attr))) {
     if(!is.null(names(col_vector))) {
       old_names <- names(col_vector)
-      col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)])
+      col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)]) # !!double colours added
       names(col_vector) <- c(old_names, new_clusters, new_name)
     } else {
       col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)])
@@ -231,10 +230,10 @@ plotSameLayout <- function(net,
 
   new_layout <- cbind(new_layout, Size = max(max_size, 100/dim(new_layout)[1]))
   new_layout[which(color_attr %in% new_name), "Size"] <- max(max_size, 100/dim(new_layout)[1])*1.5
-  new_layout <- cbind(new_layout, Colors = col_vector[color_attr])
+  new_layout <- cbind(new_layout, Colors = col_vector[color_attr])  
   new_layout <- cbind(new_layout, Group = color_attr)
   if(!is.null(label_attr)) {
-    new_layout <- cbind(new_layout, SubGroup = label_attr)
+    new_layout <- cbind(new_layout, SubGroup = label_attr) 
   }
   new_layout <- new_layout[order(match(new_layout[, "Group"],names(col_vector))),]
 

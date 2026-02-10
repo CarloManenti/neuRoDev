@@ -89,7 +89,7 @@ mapNetwork <- function(net,
   new_cor <- stats::cor(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
                         new_profiles[common_genes,])
   colnames(new_cor) <- colnames(new_profiles)
-
+    
   out <- plotSameLayout(net = net,
                         new_cor = new_cor,
                         color_attr = color_attr,
