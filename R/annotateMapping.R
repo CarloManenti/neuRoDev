@@ -51,8 +51,6 @@
 #' new_cor <- stats::cor(t(apply(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
 #' 1, function(v) {(v-mean(v))/stats::sd(v)})),new_profiles[common_genes,])
 #' annotation <- annotateMapping(net, new_cor)
-#' 
-
 annotateMapping <- function(net,
                             new_cor,
                             color_attr = 'SubClass',

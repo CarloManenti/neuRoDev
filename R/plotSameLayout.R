@@ -64,8 +64,6 @@
 #' new_cor <- stats::cor(t(apply(as.matrix(SingleCellExperiment::logcounts(net)[common_genes,]),
 #' 1, function(v) {(v-mean(v))/stats::sd(v)})),new_profiles[common_genes,])
 #' neuRoDev:::plotSameLayout(net, new_cor)
-#' 
-
 plotSameLayout <- function(net,
    new_cor,
    color_attr = 'SubClass',
@@ -82,7 +80,7 @@ plotSameLayout <- function(net,
    plot = TRUE,
     ...) {
 
-  if(is.null(col_vector)) { # FALSE
+  if(is.null(col_vector)) { 
     col_vector <- paste0(color_attr, '_color')
   }
 
@@ -90,7 +88,7 @@ plotSameLayout <- function(net,
   orig_label_attr <- label_attr
   orig_col_vec <- col_vector
 
-  if(!plot | ncol(new_cor) > 1000) { # FALSE
+  if(!plot | ncol(new_cor) > 1000) { 
     new_best_annotation <- annotateMapping(net = net,
                                            new_cor = new_cor,
                                            color_attr = orig_col_attr,
@@ -171,7 +169,7 @@ plotSameLayout <- function(net,
   if(length(unique(col_vector)) == length(unique(old_color_attr))) {
     if(!is.null(names(col_vector))) {
       old_names <- names(col_vector)
-      col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)]) # !!double colours added
+      col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)]) 
       names(col_vector) <- c(old_names, new_clusters, new_name)
     } else {
       col_vector <- c(col_vector, new_points_col[c(new_clusters, new_name)])
